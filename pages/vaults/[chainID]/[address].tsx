@@ -52,7 +52,7 @@ import { useAnchorWallet,useWallet,useConnection } from "@solana/wallet-adapter-
 
 import { RandomIdl } from "../../../randomIdl";
 
-import type {GetServerSideProps} from 'next';
+
 import type {NextRouter} from 'next/router';
 import type {ReactElement} from 'react';
 
@@ -2294,11 +2294,6 @@ Index.getLayout = function getLayout(page: ReactElement, router: NextRouter): Re
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getServerSideProps: GetServerSideProps = async () => {
-	return {
-		props: {}
-	};
 
-};
 
 export default Index;
