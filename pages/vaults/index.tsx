@@ -1,0 +1,333 @@
+import {Fragment, useCallback, useMemo,useEffect } from 'react';
+import VaultListOptions from '@vaults/components/list/VaultListOptions';
+import {VaultsListEmpty} from '@vaults/components/list/VaultsListEmpty';
+import {VaultsListInternalMigrationRow} from '@vaults/components/list/VaultsListInternalMigrationRow';
+import {VaultsListRetired} from '@vaults/components/list/VaultsListRetired';
+import {VaultsListRow} from '@vaults/components/list/VaultsListRow';
+import {useAppSettings} from '@vaults/contexts/useAppSettings';
+import {useFilteredVaults} from '@vaults/hooks/useFilteredVaults';
+import {useSortVaults} from '@vaults/hooks/useSortVaults';
+import Wrapper from '@vaults/Wrapper';
+import Renderable from '@yearn-finance/web-lib/components/Renderable';
+import {useChainID} from '@yearn-finance/web-lib/hooks/useChainID';
+import {useSessionStorage} from '@yearn-finance/web-lib/hooks/useSessionStorage';
+import {toAddress} from '@yearn-finance/web-lib/utils/address';
+import {toBigInt} from '@yearn-finance/web-lib/utils/format.bigNumber';
+import {formatAmount} from '@yearn-finance/web-lib/utils/format.number';
+import {isZero} from '@yearn-finance/web-lib/utils/isZero';
+import ListHead from '@common/components/ListHead';
+import ListHero from '@common/components/ListHero';
+import ValueAnimation from '@common/components/ValueAnimation';
+import type {TYDaemonVault, TYDaemonVaults} from '@common/schemas/yDaemonVaultsSchemas';
+
+import {useYearn} from '@common/contexts/useYearn';
+import {getVaultName} from '@common/utils';
+import type {TAddress, TDict} from '@yearn-finance/web-lib/types';
+import * as anchor from "@project-serum/anchor";
+import { web3, Wallet } from "@project-serum/anchor";
+
+
+
+import type {NextRouter} from 'next/router';
+import type {ReactElement, ReactNode} from 'react';
+
+import type {TListHeroCategory} from '@common/components/ListHero';
+
+import type {TSortDirection} from '@common/types/types';
+import type {TPossibleSortBy} from '@vaults/hooks/useSortVaults';
+
+
+const web33 = require('@solana/web3.js');
+
+
+
+
+function HeaderUserPosition(): ReactElement {
+
+
+	const formatedYouEarned = useMemo((): string => {
+		const amount = 0;
+		return formatAmount(amount) ?? '';
+	}, [0]);
+
+	const formatedYouHave = useMemo((): string => {
+		return formatAmount(0) ?? '';
+	}, [0]);
+
+	return (
+		<Fragment>
+			<div className={'col-span-12 w-full md:col-span-8'}>
+				<p className={'pb-2 text-lg text-neutral-900 md:pb-6 md:text-3xl'}>{'Deposited'}</p>
+				<b className={'font-number text-4xl text-neutral-900 md:text-7xl'}>
+					<ValueAnimation
+						identifier={'youHave'}
+						value={formatedYouHave}
+						defaultValue={'0,00'}
+						prefix={'$'} />
+				</b>
+			</div>
+			<div className={'col-span-12 w-full md:col-span-4'}>
+				<p className={'pb-2 text-lg text-neutral-900 md:pb-6 md:text-3xl'}>{'Earnings'}</p>
+				<b className={'font-number text-3xl text-neutral-900 md:text-7xl'}>
+					<ValueAnimation
+						identifier={'youEarned'}
+						value={formatedYouEarned}
+						defaultValue={'0,00'}
+						prefix={'$'} />
+				</b>
+			</div>
+		</Fragment>
+	);
+}
+
+function Index(): ReactElement {
+	const {safeChainID} = useChainID();
+	
+	let {vaults, vaultsMigrations, vaultsRetired, isLoadingVaultList} = useYearn();
+
+	let vaults_ftrr: TDict<TYDaemonVault>={}
+	vaults_ftrr["0x3a51269E0707A3416044bad5066858A12198fCf7"]=
+		{"address":"0x3a51269E0707A3416044bad5066858A12198fCf7",
+		"ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
+		"ftr_type":"Distributor",
+		"ftr_pool_id":"DeKY5iwoYLgKzufMoGkU8ZccjiZKWb4KDdF6BX2XZv25",
+		"type":"Automated","symbol":"stSOL automated LP","display_symbol":"Onchain Funding Arbitrage","formated_symbol":"Onchain Funding Arbitrage","name":"Onchain Funding Arbitrage","display_name":"Onchain Funding Arbitrage","formated_name":"Onchain Funding Arbitrage","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png","version":"0.4.6","category":"Volatile","inception":1675027391,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"Onchain Funding Arbitrage","display_symbol":"CLEVETH-f","description":"This token represents a Curve v2 crypto pool. Holders earn fees from users trading in the pool, and can also deposit the LP to Curve's gauges to earn CRV emissions. This crypto pool contains CLEV and ETH. Please be aware that as crypto pools are composed of differently-priced assets, they are subject to impermanent loss.","icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},"tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4543.2132083857305,"tvl_delegated":0,"tvl":4543.2132083857305,"price":296.529102},
+		"apy":{"type":"crv","gross_apr":0.7151501957902291,"net_apy":0.89569016529357,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+		"details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+		"strategies":[{"address":"0xEE341d18939562D6D8A34ea31Fe9BdA55bACb947","name":"StrategyCurveBoostedFactory-CLEVETH-f","displayName":"Curve Boost","description":"Supplies {{token}} to [Curve Finance](https://curve.fi) and stakes it in gauge to collect any available tokens and earn enhanced CRV rewards thanks to [Yearn's locked CRV boost](https://docs.yearn.finance/getting-started/guides/how-boost-works). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"15041529720494645680","totalLoss":"0","totalGain":"11587075871941007617","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"15041529720494645680","creditAvailable":"279776612486223422","debtOutstanding":"0","expectedReturn":"1549944828288110449","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1686264683,"activation":1675027391,"keepCRV":0,"debtRatio":10000,"debtLimit":0,"withdrawalQueuePosition":1,"doHealthCheck":true,"inQueue":true,"emergencyExit":false,"isActive":true},"risk":{"riskScore":2,"riskGroup":"Curve Boosted Factory","riskDetails":{"TVLImpact":1,"auditScore":5,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Yellow","currentTVL":"158570117.28708875","availableTVL":"-61346114.77387886","currentAmount":"463000629.32106197","availableAmount":"-2013.3633712140868"}}},{"address":"0xd73B085C715ADeE2551f5bAbc28200E79f739b0A","name":"StrategyConvexFactory-CLEVETH-f","displayName":"Convex Reinvest","description":"Supplies {{token}} to [Convex Finance](https://www.convexfinance.com/stake) boosted by Convex's veCRV to earn CRV and CVX (and any other available tokens). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"0","totalLoss":"0","totalGain":"0","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"0","creditAvailable":"0","debtOutstanding":"0","expectedReturn":"0","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Convex Finance","Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1675027391,"activation":1675027391,"keepCRV":0,"debtLimit":0,"withdrawalQueuePosition":0,"doHealthCheck":false,"inQueue":true,"emergencyExit":false,"isActive":false},"risk":{"riskScore":2,"riskGroup":"Convex Factory","riskDetails":{"TVLImpact":0,"auditScore":4,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Green","currentTVL":"0","availableTVL":"0","currentAmount":"0","availableAmount":"0"}}}],"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
+		
+
+	vaults_ftrr["0x3a51269E0707A3416044bad5066858A12198fCf6"]=
+		{"address":"0x3a51269E0707A3416044bad5066858A12198fCf6",
+		"ftr_sc_addy":"5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3",
+		"ftr_type":"Whirlpool",
+		"ftr_pool_id":"hehe3",
+		"type":"Automated","symbol":"stSOL automated LP","display_symbol":"stSOL automated LP","formated_symbol":"stSOLLP","name":"stSOL automated LP","display_name":"stSOL automated LP","formated_name":"stSOL automated LP","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png","version":"0.4.6","category":"Volatile","inception":1675027391,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f","description":"This token represents a Curve v2 crypto pool. Holders earn fees from users trading in the pool, and can also deposit the LP to Curve's gauges to earn CRV emissions. This crypto pool contains CLEV and ETH. Please be aware that as crypto pools are composed of differently-priced assets, they are subject to impermanent loss.","icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},"tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4543.2132083857305,"tvl_delegated":0,"tvl":4543.2132083857305,"price":296.529102},
+		"apy":{"type":"crv","gross_apr":0.7151501957902291,"net_apy":0.89569016529357,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+		"details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+		"strategies":[{"address":"0xEE341d18939562D6D8A34ea31Fe9BdA55bACb947","name":"StrategyCurveBoostedFactory-CLEVETH-f","displayName":"Curve Boost","description":"Supplies {{token}} to [Curve Finance](https://curve.fi) and stakes it in gauge to collect any available tokens and earn enhanced CRV rewards thanks to [Yearn's locked CRV boost](https://docs.yearn.finance/getting-started/guides/how-boost-works). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"15041529720494645680","totalLoss":"0","totalGain":"11587075871941007617","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"15041529720494645680","creditAvailable":"279776612486223422","debtOutstanding":"0","expectedReturn":"1549944828288110449","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1686264683,"activation":1675027391,"keepCRV":0,"debtRatio":10000,"debtLimit":0,"withdrawalQueuePosition":1,"doHealthCheck":true,"inQueue":true,"emergencyExit":false,"isActive":true},"risk":{"riskScore":2,"riskGroup":"Curve Boosted Factory","riskDetails":{"TVLImpact":1,"auditScore":5,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Yellow","currentTVL":"158570117.28708875","availableTVL":"-61346114.77387886","currentAmount":"463000629.32106197","availableAmount":"-2013.3633712140868"}}},{"address":"0xd73B085C715ADeE2551f5bAbc28200E79f739b0A","name":"StrategyConvexFactory-CLEVETH-f","displayName":"Convex Reinvest","description":"Supplies {{token}} to [Convex Finance](https://www.convexfinance.com/stake) boosted by Convex's veCRV to earn CRV and CVX (and any other available tokens). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"0","totalLoss":"0","totalGain":"0","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"0","creditAvailable":"0","debtOutstanding":"0","expectedReturn":"0","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Convex Finance","Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1675027391,"activation":1675027391,"keepCRV":0,"debtLimit":0,"withdrawalQueuePosition":0,"doHealthCheck":false,"inQueue":true,"emergencyExit":false,"isActive":false},"risk":{"riskScore":2,"riskGroup":"Convex Factory","riskDetails":{"TVLImpact":0,"auditScore":4,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Green","currentTVL":"0","availableTVL":"0","currentAmount":"0","availableAmount":"0"}}}],"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
+		
+	console.log(vaults)
+	vaults=vaults_ftrr
+
+	//---------------------------------------  LOADING ANCHOR ENV  --------------------------------
+
+
+
+	//---------------------------------------  ENDLOADING ANCHOR ENV  --------------------------------
+
+
+
+
+
+	const [sort, set_sort] = useSessionStorage<{sortBy: TPossibleSortBy, sortDirection: TSortDirection}>(
+		'yVaultsSorting', {sortBy: 'apy', sortDirection: 'desc'}
+	);
+	const {shouldHideDust, shouldHideLowTVLVaults, category, searchValue, set_category, set_searchValue} = useAppSettings();
+
+
+
+	/* 🔵 - Yearn Finance **************************************************************************
+	**	It's best to memorize the filtered vaults, which saves a lot of processing time by only
+	**	performing the filtering once.
+	**********************************************************************************************/
+	const curveVaults = useFilteredVaults(vaults, ({category}): boolean => category === 'Curve');
+	const velodromeVaults = useFilteredVaults(vaults, ({category}): boolean => category === 'Velodrome');
+	const stablesVaults = useFilteredVaults(vaults, ({category}): boolean => category === 'Stablecoin');
+	const balancerVaults = useFilteredVaults(vaults, ({category}): boolean => category === 'Balancer');
+	const cryptoVaults = useFilteredVaults(vaults, ({category}): boolean => category === 'Volatile');
+	const holdingsVaults = useFilteredVaults(vaults, ({category}): boolean => category === 'Volatile');
+	const migratableVaults = useFilteredVaults(vaults, ({category}): boolean => category === 'Volatile');
+	const retiredVaults = useFilteredVaults(vaults, ({category}): boolean => category === 'Volatile');
+
+	const categoriesToDisplay = useMemo((): TListHeroCategory<string>[] => {
+		const categories = [
+			{value: 'Featured Vaults', label: 'Featured', isSelected: category === 'Featured Vaults'},
+			{value: 'Crypto Vaults', label: 'Crypto', isSelected: category === 'Crypto Vaults'},
+			{value: 'Stables Vaults', label: 'Stables', isSelected: category === 'Stables Vaults'},
+			{value: 'Curve Vaults', label: 'Curve', isSelected: category === 'Curve Vaults'}
+		];
+		if (safeChainID === 10) {
+			categories.push({value: 'Velodrome Vaults', label: 'Velodrome', isSelected: category === 'Velodrome Vaults'});
+		} else {
+			categories.push({value: 'Balancer Vaults', label: 'Balancer', isSelected: category === 'Balancer Vaults'});
+		}
+		return [
+			...categories,
+			{value: 'All Vaults', label: 'All', isSelected: category === 'All Vaults'}
+		];
+	}, [category, safeChainID]);
+
+	/* 🔵 - Yearn Finance **************************************************************************
+	**	First, we need to determine in which category we are. The vaultsToDisplay function will
+	**	decide which vaults to display based on the category. No extra filters are applied.
+	**	The possible lists are memoized to avoid unnecessary re-renders.
+	**********************************************************************************************/
+	const vaultsToDisplay = useMemo((): TYDaemonVault[] => {
+		let _vaultList: TYDaemonVault[] = [...Object.values(vaults || {})] as TYDaemonVault[];
+
+		if (category === 'Curve Vaults') {
+			_vaultList = curveVaults;
+		} else if (category === 'Balancer Vaults') {
+			_vaultList = balancerVaults;
+		} else if (category === 'Velodrome Vaults') {
+			_vaultList = velodromeVaults;
+		} else if (category === 'Stables Vaults') {
+			_vaultList = stablesVaults;
+		} else if (category === 'Crypto Vaults') {
+			_vaultList = cryptoVaults;
+		} else if (category === 'Holdings') {
+			_vaultList = holdingsVaults;
+		} else if (category === 'Featured Vaults') {
+			_vaultList.sort((a, b): number => ((b.tvl.tvl || 0) * (b?.apy?.net_apy || 0)) - ((a.tvl.tvl || 0) * (a?.apy?.net_apy || 0)));
+			_vaultList = _vaultList.slice(0, 10);
+		}
+
+		if (shouldHideLowTVLVaults && category !== 'Holdings') {
+			_vaultList = _vaultList.filter((vault): boolean => (vault?.tvl?.tvl || 0) > 10_000);
+		}
+
+		return _vaultList;
+	}, [vaults, category, shouldHideLowTVLVaults, curveVaults, balancerVaults, velodromeVaults, stablesVaults, cryptoVaults, holdingsVaults]);
+
+	/* 🔵 - Yearn Finance **************************************************************************
+	**	Then, on the vaultsToDisplay list, we apply the search filter. The search filter is
+	**	implemented as a simple string.includes() on the vault name.
+	**********************************************************************************************/
+	const searchedVaultsToDisplay = useMemo((): TYDaemonVault[] => {
+		const vaultsToUse = [...vaultsToDisplay];
+
+		if (searchValue === '') {
+			return vaultsToUse;
+		}
+		return vaultsToUse.filter((vault): boolean => {
+			const searchString = getVaultName(vault);
+			return searchString.toLowerCase().includes(searchValue.toLowerCase());
+		});
+	}, [vaultsToDisplay, searchValue]);
+
+	/* 🔵 - Yearn Finance **************************************************************************
+	**	Then, once we have reduced the list of vaults to display, we can sort them. The sorting
+	**	is done via a custom method that will sort the vaults based on the sortBy and
+	**	sortDirection values.
+	**********************************************************************************************/
+	const sortedVaultsToDisplay = useSortVaults([...searchedVaultsToDisplay], sort.sortBy, sort.sortDirection);
+
+	/* 🔵 - Yearn Finance **************************************************************************
+	**	Callback method used to sort the vaults list.
+	**	The use of useCallback() is to prevent the method from being re-created on every render.
+	**********************************************************************************************/
+	const onSort = useCallback((newSortBy: string, newSortDirection: string): void => {
+		set_sort({sortBy: newSortBy as TPossibleSortBy, sortDirection: newSortDirection as TSortDirection});
+	}, [set_sort]);
+
+	/* 🔵 - Yearn Finance **************************************************************************
+	**	The VaultList component is memoized to prevent it from being re-created on every render.
+	**	It contains either the list of vaults, is some are available, or a message to the user.
+	**********************************************************************************************/
+	const VaultList = useMemo((): ReactNode => {
+		if (isLoadingVaultList && category === 'Holdings') {
+			return (
+				<VaultsListEmpty
+					isLoading={isLoadingVaultList}
+					sortedVaultsToDisplay={sortedVaultsToDisplay}
+					currentCategory={category} />
+			);
+		}
+		if (isLoadingVaultList || isZero(sortedVaultsToDisplay.length)) {
+			return (
+				<VaultsListEmpty
+					isLoading={isLoadingVaultList}
+					sortedVaultsToDisplay={sortedVaultsToDisplay}
+					currentCategory={category} />
+			);
+		}
+		return (
+			sortedVaultsToDisplay.map((vault): ReactNode => {
+				if (!vault) {
+					return (null);
+				}
+				return <VaultsListRow key={vault.address} currentVault={vault} />;
+			})
+		);
+	}, [category, isLoadingVaultList, sortedVaultsToDisplay]);
+	console.log('Category ffs')
+	return (
+		<section className={'mt-4 grid w-full grid-cols-12 gap-y-10 pb-10 md:mt-20 md:gap-x-10 md:gap-y-20'}>
+
+			
+
+			<div className={'relative col-span-12 flex w-full flex-col bg-neutral-100'}>
+				<div className={'absolute right-8 top-8'}>
+					<VaultListOptions />
+				</div>
+				<ListHero
+					headLabel={category}
+					searchLabel={`Search ${category}`}
+					searchPlaceholder={'YFI Vault'}
+					categories={[
+						categoriesToDisplay,
+						[
+							{
+								value: 'Holdings',
+								label: 'Holdings',
+								isSelected: category === 'Holdings',
+								node: (
+									<Fragment>
+										{'Holdings'}
+										<span className={`absolute -right-1 -top-1 flex h-2 w-2 ${category === 'Holdings' || isZero(migratableVaults?.length + retiredVaults?.length) ? 'opacity-0' : 'opacity-100'}`}>
+											<span className={'absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-600 opacity-75'}></span>
+											<span className={'relative inline-flex h-2 w-2 rounded-full bg-pink-500'}></span>
+										</span>
+									</Fragment>
+								)
+							}
+						]
+					]}
+					onSelect={set_category}
+					searchValue={searchValue}
+					set_searchValue={set_searchValue} />
+
+
+				<Renderable shouldRender={category === 'Holdings' && retiredVaults?.length > 0}>
+					<div>
+						{retiredVaults.filter((vault): boolean => !!vault).map((vault): ReactNode =>
+							<VaultsListRetired key={vault.address} currentVault={vault} />
+						)}
+					</div>
+				</Renderable>
+
+				<Renderable shouldRender={category === 'Holdings' && migratableVaults?.length > 0}>
+					<div>
+						{migratableVaults.filter((vault): boolean => !!vault).map((vault): ReactNode =>
+							<VaultsListInternalMigrationRow key={vault.address} currentVault={vault} />
+						)}
+					</div>
+				</Renderable>
+
+				<div className={'mt-4'} />
+				<ListHead
+					sortBy={sort.sortBy}
+					sortDirection={sort.sortDirection}
+					onSort={onSort}
+					items={[
+						{label: 'Token', value: 'name', sortable: true},
+						{label: 'APY', value: 'apy', sortable: true, className: 'col-span-2'},
+						{label: 'Available', value: 'available', sortable: true, className: 'col-span-2'},
+						{label: 'Deposited', value: 'deposited', sortable: true, className: 'col-span-2'},
+						{label: 'TVL', value: 'tvl', sortable: true, className: 'col-span-2'}
+					]} />
+
+				{VaultList}
+			</div>
+
+		</section>
+	);
+}
+
+
+Index.getLayout = function getLayout(page: ReactElement, router: NextRouter): ReactElement {
+	return <Wrapper router={router}>{page}</Wrapper>;
+};
+
+export default Index;
