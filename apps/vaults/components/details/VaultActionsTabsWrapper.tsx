@@ -9,7 +9,7 @@ import VaultDetailsQuickActionsSwitch from '@vaults/components/details/actions/Q
 import VaultDetailsQuickActionsTo from '@vaults/components/details/actions/QuickActionsTo';
 import ImageWithOverlay from '@vaults/components/ImageWithOverlay';
 import {RewardsTab} from '@vaults/components/RewardsTab';
-import SettingsPopover from '@vaults/components/SettingsPopover';
+import UpdatePopover from '@vaults/components/UpdatePopover';
 import {Flow, useActionFlow} from '@vaults/contexts/useActionFlow';
 import {useStakingRewards} from '@vaults/contexts/useStakingRewards';
 import {Banner} from '@yearn-finance/web-lib/components/Banner';
@@ -50,7 +50,7 @@ function getCurrentTab({isDepositing, hasMigration, isRetired}: {isDepositing: b
 	return tabs.find((tab): boolean => tab.value === (isDepositing ? 0 : 1)) as TTabsOptions;
 }
 
-function VaultActionsTabsWrapper({currentVault,amount1,amount2,amount3,amount4,userInput1,userInput2,setUserInput1,setUserInput2,button_message,button_is_clicked,is_busy,other_token_name}: {currentVault: TYDaemonVault,amount1:any,amount2:any,amount3:any,amount4:any,userInput1:any,userInput2:any,setUserInput1:any,setUserInput2:any,button_message:any,button_is_clicked:any,is_busy:any,other_token_name:any}): ReactElement {
+function VaultActionsTabsWrapper({currentVault,amount1,amount2,amount3,amount4,userInput1,userInput2,setUserInput1,setUserInput2,button_message,button_is_clicked,is_busy,other_token_name,update_is_clicked}: {currentVault: TYDaemonVault,amount1:any,amount2:any,amount3:any,amount4:any,userInput1:any,userInput2:any,setUserInput1:any,setUserInput2:any,button_message:any,button_is_clicked:any,is_busy:any,other_token_name:any,update_is_clicked:any}): ReactElement {
 	
 	const {onSwitchSelectedOptions, isDepositing, actionParams, currentSolver} = useActionFlow();
 	const [possibleTabs, set_possibleTabs] = useState<TTabsOptions[]>([tabs[0], tabs[1]]);
@@ -231,7 +231,7 @@ function VaultActionsTabsWrapper({currentVault,amount1,amount2,amount3,amount4,u
 					</div>
 
 					<div className={'flex flex-row items-center justify-end space-x-2 pb-0 md:pb-4 md:last:space-x-4'}>
-						<SettingsPopover />
+						<UpdatePopover button_is_clicked={update_is_clicked}/>
 					</div>
 				</div>
 				<div className={'-mt-0.5 h-0.5 w-full bg-neutral-300'} />

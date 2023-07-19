@@ -2,7 +2,7 @@ import {Fragment} from 'react';
 import {Popover, Transition} from '@headlessui/react';
 import {isSolverDisabled} from '@vaults/contexts/useSolver';
 import Renderable from '@yearn-finance/web-lib/components/Renderable';
-import IconSettings from '@yearn-finance/web-lib/icons/IconSettings';
+import IconLoader from '@yearn-finance/web-lib/icons/IconSettings';
 import {useYearn} from '@common/contexts/useYearn';
 import {Solver} from '@common/schemas/yDaemonTokenListBalances';
 
@@ -18,7 +18,7 @@ export default function SettingsPopover(): ReactElement {
 				<>
 					<Popover.Button>
 						<span className={'sr-only'}>{'Settings'}</span>
-						<IconSettings className={'transition-color h-4 w-4 text-neutral-400 hover:text-neutral-900'} />
+						<IconLoader className={'transition-color h-4 w-4 text-neutral-400 hover:text-neutral-900'} />
 					</Popover.Button>
 					<Transition
 						as={Fragment}

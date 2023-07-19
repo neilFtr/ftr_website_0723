@@ -11,6 +11,11 @@ type TUseZodProps<T> = {
 	config?: Parameters<typeof useSWR<T>>[2];
 }
 
+type TUseZodPropsFTR<T> = {
+	endpoint: string | null;
+	config?: Parameters<typeof useSWR<T>>[2];
+}
+
 export function useFetch<T>({endpoint, schema, config}: TUseZodProps<T>): SWRResponse<T> & {isSuccess: boolean} {
 	const result = useSWR<T>(endpoint, baseFetcher, {revalidateOnFocus: false, ...config});
 
@@ -34,4 +39,23 @@ export function useFetch<T>({endpoint, schema, config}: TUseZodProps<T>): SWRRes
 	}
 
 	return {...result, data: parsedData.data, isSuccess: true};
+}
+
+
+
+export function useFetchFTR<T>({endpoint, config}: TUseZodPropsFTR<T>): SWRResponse<T> & {isSuccess: boolean} {
+	const result = useSWR<T>(endpoint, baseFetcher, {revalidateOnFocus: false, ...config});
+
+	if (!result.data || result.isLoading || result.isValidating) {
+
+		return {...result, isSuccess: false};
+	}
+
+	if (result.error) {
+
+		Sentry.captureException(result.error, {tags: {endpoint}});
+		return {...result, isSuccess: false};
+	}
+
+	return {...result, data: result.data, isSuccess: true};
 }

@@ -52,9 +52,7 @@ function VaultDetailsQuickActionsTo(): ReactElement {
 						</div>
 					</div>
 				</Renderable>
-				<legend className={'font-number hidden text-xs text-neutral-600 md:inline'} suppressHydrationWarning>
-					{isDepositing ? (formatPercent(((currentVault?.apy?.net_apy || 0) + (currentVault?.apy?.staking_rewards_apr || 0)) * 100, 2, 2, 500)) : ''}
-				</legend>
+
 			</div>
 
 

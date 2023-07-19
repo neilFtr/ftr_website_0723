@@ -25,29 +25,16 @@ function VaultsListRow({currentVault}: {currentVault: TYDaemonVault}): ReactElem
 
 	const {stakingRewardsByVault, positionsMap} = useStakingRewards();
 	const stakedBalance = toNormalizedValue(toBigInt(positionsMap[toAddress(stakingRewardsByVault[currentVault.address])]?.stake), currentVault.decimals);
-	const depositedAndStaked = deposited + stakedBalance;
+	const depositedAndStaked = 0
 
-	const availableToDeposit = useMemo((): number => {
-		// Handle ETH native coin
-		if (toAddress(currentVault.token.address) === WETH_TOKEN_ADDRESS) {
-			return (balanceOfWrappedCoin.normalized + balanceOfCoin.normalized);
-		}
-		if (toAddress(currentVault.token.address) === WFTM_TOKEN_ADDRESS) {
-			return (balanceOfWrappedCoin.normalized + Number(toNormalizedBN(balanceOfCoin.raw, 18).normalized));
-		}
-		return balanceOfWant.normalized;
-	}, [balanceOfCoin.normalized, balanceOfCoin.raw, balanceOfWant.normalized, balanceOfWrappedCoin.normalized, currentVault.token.address]);
-
+	const availableToDeposit = currentVault.inception;
 	return (
 		<Link key={`${currentVault.address}`} href={`/vaults/${safeChainID}/${toAddress(currentVault.address)}`}>
 			<div className={'yearn--table-wrapper cursor-pointer transition-colors hover:bg-neutral-300'}>
 				<div className={'yearn--table-token-section'}>
 					<div className={'yearn--table-token-section-item'}>
 						<div className={'yearn--table-token-section-item-image'}>
-							<TokenIcon
-								chainID={currentVault.chainID}
-								size={40}
-								token={currentVault.token} />
+			
 						</div>
 						<p>{vaultName}</p>
 					</div>
@@ -65,7 +52,7 @@ function VaultsListRow({currentVault}: {currentVault: TYDaemonVault}): ReactElem
 								)}
 							</b>
 							<small className={'text-xs text-neutral-900'}>
-								{isEthMainnet && currentVault.apy?.composite?.boost && !currentVault.apy?.staking_rewards_apr ? `BOOST ${formatAmount(currentVault.apy?.composite?.boost, 2, 2)}x` : null}
+								{"7D calc"}
 							</small>
 							<small className={'text-xs text-neutral-900'}>
 								{currentVault.apy?.staking_rewards_apr ? `REWARD ${formatPercent((currentVault.apy?.staking_rewards_apr || 0) * 100, 2, 2, 500)}` : null}
@@ -76,7 +63,7 @@ function VaultsListRow({currentVault}: {currentVault: TYDaemonVault}): ReactElem
 					<div className={'yearn--table-data-section-item md:col-span-2'} datatype={'number'}>
 						<label className={'yearn--table-data-section-item-label !font-aeonik'}>{'Available'}</label>
 						<p className={`yearn--table-data-section-item-value ${isZero(availableToDeposit) ? 'text-neutral-400' : 'text-neutral-900'}`}>
-							{formatAmount(availableToDeposit)}
+							{formatPercent(availableToDeposit)}
 						</p>
 					</div>
 

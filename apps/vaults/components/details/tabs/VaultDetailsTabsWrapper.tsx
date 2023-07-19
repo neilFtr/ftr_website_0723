@@ -16,7 +16,7 @@ import {toAddress} from '@yearn-finance/web-lib/utils/address';
 import {formatToNormalizedValue, toBigInt} from '@yearn-finance/web-lib/utils/format.bigNumber';
 import {formatDate} from '@yearn-finance/web-lib/utils/format.time';
 import {isZero} from '@yearn-finance/web-lib/utils/isZero';
-import {useFetch} from '@common/hooks/useFetch';
+import {useFetch,useFetchFTR} from '@common/hooks/useFetch';
 import IconChevron from '@common/icons/IconChevron';
 import {yDaemonVaultHarvestsSchema} from '@common/schemas/yDaemonVaultsSchemas';
 import {assert} from '@common/utils/assert';
@@ -46,8 +46,7 @@ function Tabs({selectedAboutTabIndex, set_selectedAboutTabIndex}: TTabs): ReactE
 
 	const tabs: TTabsOptions[] = useMemo((): TTabsOptions[] => [
 		{value: 0, label: 'About', slug: 'about'},
-		{value: 1, label: 'Strategies', slug: 'strategies'},
-		{value: 2, label: 'Historical rates', slug: 'historical-rates'}
+
 	], []);
 
 	useEffect((): void => {
@@ -176,6 +175,26 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 		}
 	}
 
+
+	const {data: ftr_data_chart} = useFetchFTR<any>({
+		endpoint: "https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=zeta_drift_strat_histo_30",
+	});
+
+	const example_obj = {
+	  name: 'Bobby Hadz',
+	  country: 0,
+	};
+
+	var actual_data=[{name:formatDate(1689340107),value:100}]
+
+	if (ftr_data_chart){
+		actual_data=[]
+		let all_names=Object.getOwnPropertyNames(ftr_data_chart)
+		for (let an=0;an<all_names.length;an++){
+			actual_data.push({name:formatDate(Number(ftr_data_chart[String(an) as any]["0"])*1000),value:Number(ftr_data_chart[String(an) as any]["2"])})
+		}
+	}
+
 	const {data: yDaemonHarvestsData} = useFetch<TYDaemonVaultHarvests>({
 		endpoint: `${yDaemonBaseUri}/vaults/harvests/${currentVault.address}`,
 		schema: yDaemonVaultHarvestsSchema
@@ -183,11 +202,18 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 
 	const harvestData = useMemo((): { name: string; value: number }[] => {
 		const _yDaemonHarvestsData = [...(yDaemonHarvestsData || [])].reverse();
-		return (
-			_yDaemonHarvestsData.map((harvest): { name: string; value: number } => ({
+
+		let rnew=_yDaemonHarvestsData.map((harvest): { name: string; value: number } => ({
 				name: formatDate(Number(harvest.timestamp) * 1000),
 				value: formatToNormalizedValue(toBigInt(harvest.profit) - toBigInt(harvest.loss), currentVault.decimals)
 			}))
+
+
+
+
+		console.log("DATA SHAPE")
+		console.log(rnew)
+		return (actual_data
 		);
 	}, [currentVault.decimals, yDaemonHarvestsData]);
 
@@ -198,22 +224,7 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 					selectedAboutTabIndex={selectedAboutTabIndex}
 					set_selectedAboutTabIndex={set_selectedAboutTabIndex} />
 
-				<div className={'flex flex-row items-center justify-end space-x-2 pb-0 md:pb-4 md:last:space-x-4'}>
-					<button
-						onClick={(): void => {
-							onAddTokenToMetamask(
-								currentVault.address,
-								currentVault.symbol,
-								currentVault.decimals,
-								currentVault.icon
-							);
-						}
-						}>
-						<span className={'sr-only'}>{'Add to wallet'}</span>
-						<IconAddToMetamask className={'h-5 w-5 text-neutral-600 transition-colors hover:text-neutral-900 md:h-6 md:w-6'} />
-					</button>
-					<ExplorerLink explorerBaseURI={networkSettings?.explorerBaseURI} currentVaultAddress={currentVault.address} />
-				</div>
+
 			</div>
 
 			<div className={'-mt-0.5 h-0.5 w-full bg-neutral-300'} />
@@ -225,8 +236,7 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 			</Renderable>
 
 			<Renderable shouldRender={currentVault && selectedAboutTabIndex === 1}>
-				<VaultDetailsStrategies
-					currentVault={currentVault} />
+
 			</Renderable>
 
 			<Renderable shouldRender={currentVault && selectedAboutTabIndex === 2}>

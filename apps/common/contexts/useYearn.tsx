@@ -4,14 +4,14 @@ import {useWeb3} from '@yearn-finance/web-lib/contexts/useWeb3';
 import {useChainID} from '@yearn-finance/web-lib/hooks/useChainID';
 import {useLocalStorage} from '@yearn-finance/web-lib/hooks/useLocalStorage';
 import {toAddress} from '@yearn-finance/web-lib/utils/address';
-import {useFetch} from '@common/hooks/useFetch';
+import {useFetch,useFetchFTR} from '@common/hooks/useFetch';
 import {yDaemonEarnedSchema} from '@common/schemas/yDaemonEarnedSchema';
 import {yDaemonPricesSchema} from '@common/schemas/yDaemonPricesSchema';
 import {Solver} from '@common/schemas/yDaemonTokenListBalances';
 import {yDaemonTokensSchema} from '@common/schemas/yDaemonTokensSchema';
 import {yDaemonVaultsSchema} from '@common/schemas/yDaemonVaultsSchemas';
 import {DEFAULT_SLIPPAGE} from '@common/utils/constants';
-import {useYDaemonBaseURI} from '@common/utils/getYDaemonBaseURI';
+import {useYDaemonBaseURI,useYDaemonBaseURIFTR} from '@common/utils/getYDaemonBaseURI';
 
 import type {ReactElement} from 'react';
 import type {KeyedMutator} from 'swr';
@@ -36,6 +36,7 @@ export type TYearnContext = {
 	mutateVaultList: KeyedMutator<TYDaemonVaults>,
 	set_zapSlippage: (value: number) => void
 	set_zapProvider: (value: TSolver) => void
+	ftr_vaults_data?: any,
 }
 
 const YearnContext = createContext<TYearnContext>({
@@ -61,6 +62,8 @@ const YearnContext = createContext<TYearnContext>({
 export const YearnContextApp = memo(function YearnContextApp({children}: { children: ReactElement }): ReactElement {
 	const {safeChainID} = useChainID();
 	const {yDaemonBaseUri} = useYDaemonBaseURI({chainID: safeChainID});
+	const {ftrDaemonBaseUri}=useYDaemonBaseURIFTR();
+
 	const {address, currentPartner} = useWeb3();
 	const [zapSlippage, set_zapSlippage] = useLocalStorage<number>('yearn.finance/zap-slippage', DEFAULT_SLIPPAGE);
 	const [zapProvider, set_zapProvider] = useLocalStorage<TSolver>('yearn.finance/zap-provider', Solver.enum.Cowswap);
@@ -74,6 +77,15 @@ export const YearnContextApp = memo(function YearnContextApp({children}: { child
 		endpoint: `${yDaemonBaseUri}/tokens/all`,
 		schema: yDaemonTokensSchema
 	});
+
+	let downloaded_data=""
+	let {data: downloaded_datar}=useFetchFTR<any>({
+	//	endpoint:`${ftrDaemonBaseUri}/beta/data_products/anakin_strat_perf.json`
+		endpoint: `https://www.stratcoins.io/maj_datas_ftr.php`,
+	})
+
+
+
 
 	const {data: vaults, isLoading: isLoadingVaultList, mutate: mutateVaultList} = useFetch<TYDaemonVaults>({
 		endpoint: `${yDaemonBaseUri}/vaults/all?${new URLSearchParams({
@@ -158,7 +170,8 @@ export const YearnContextApp = memo(function YearnContextApp({children}: { child
 		vaultsMigrations: vaultsMigrationsObject,
 		vaultsRetired: vaultsRetiredObject,
 		isLoadingVaultList,
-		mutateVaultList
+		mutateVaultList,
+		ftr_vaults_data:downloaded_datar
 	}), [currentPartner?.id, pricesUpdated, tokens, earned, zapSlippage, set_zapSlippage, zapProvider, set_zapProvider, vaultsObject, vaultsMigrationsObject, isLoadingVaultList, mutateVaultList, vaultsRetiredObject]);
 
 	return (

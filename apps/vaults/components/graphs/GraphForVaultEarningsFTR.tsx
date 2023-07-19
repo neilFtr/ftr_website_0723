@@ -14,10 +14,9 @@ export type TGraphForVaultEarningsProps = {
 	isCumulative?: boolean,
 }
 
-function GraphForVaultEarnings({currentVault, harvestData, height = 312, isCumulative = true}: TGraphForVaultEarningsProps): ReactElement {
-	console.log("Is main chart")
-	let useless=currentVault
+function GraphForVaultEarningsFTR({currentVault, harvestData, height = 312, isCumulative = true}: TGraphForVaultEarningsProps): ReactElement {
 	const cumulativeData = useMemo((): {name: string; value: number}[] => {
+		console.log("THATS THE FTR CHART")
 		let cumulativeValue = 0;
 		return (
 			harvestData.map((item: {name: string; value: number}): {name: string; value: number} => {
@@ -89,7 +88,7 @@ function GraphForVaultEarnings({currentVault, harvestData, height = 312, isCumul
 									<div className={'flex flex-row items-center justify-between'}>
 										<p className={'text-xs text-neutral-600'}>{'Earnings'}</p>
 										<b className={'font-number text-xs font-bold text-neutral-900'}>
-											{`${formatAmount(Number(value))} %`}
+											{`${formatAmount(Number(value))} ${currentVault.token.symbol}`}
 										</b>
 									</div>
 								</div>
@@ -102,5 +101,5 @@ function GraphForVaultEarnings({currentVault, harvestData, height = 312, isCumul
 	);
 }
 
-export {GraphForVaultEarnings};
-export default GraphForVaultEarnings;
+export {GraphForVaultEarningsFTR};
+export default GraphForVaultEarningsFTR;

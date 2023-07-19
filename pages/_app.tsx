@@ -6,7 +6,7 @@ import {useIsMounted, useLocalStorageValue, useUpdateEffect} from '@react-hookz/
 import {WithYearn} from '@yearn-finance/web-lib/contexts/WithYearn';
 import {useChainID} from '@yearn-finance/web-lib/hooks/useChainID';
 import {baseFetcher} from '@yearn-finance/web-lib/utils/fetchers';
-
+import {AppHeader} from '@common/components/AppHeader';
 import Meta from '@common/components/Meta';
 import {Popover} from '@common/components/Popover';
 import {MenuContextApp} from '@common/contexts/useMenu';
@@ -85,11 +85,8 @@ const WithLayout = memo(function WithLayout(props: AppProps): ReactElement {
 		<div id={'app'} className={'mx-auto mb-0 flex max-w-6xl font-aeonik'}>
 			<div className={'block min-h-[100vh] w-full'}>
 
+				<AppHeader />
 
-				<div className={'flex flex-row justify-end '}>
-	                <WalletMultiButtonDynamic className="wallet-button"  />
-	               
-            	</div>
 				<LazyMotion features={domAnimation}>
 					<AnimatePresence mode={'wait'}>
 						<motion.div
@@ -100,7 +97,7 @@ const WithLayout = memo(function WithLayout(props: AppProps): ReactElement {
 							className={'my-0 h-full md:mb-0 md:mt-16'}
 							variants={variants}>
 							{getLayout(<Component router={props.router} {...pageProps} />, router)}
-							{!value && <Popover />}
+							
 						</motion.div>
 					</AnimatePresence>
 				</LazyMotion>

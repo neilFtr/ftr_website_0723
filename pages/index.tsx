@@ -24,12 +24,7 @@ const apps = [
 		description: 'deposit tokens and receive yield.',
 
 	},
-	{
-		href: '/data',
-		title: 'Market Data',
-		description: 'Get actionnable insights on the crypto markets',
 
-	},
 	// {
 	// 	href: '/ybal',
 	// 	title: 'yBal',
@@ -170,10 +165,10 @@ function TextAnimation(): ReactElement {
 		<>
 			<div className={'text sticky'}>
 				<p className={'wordWrapper'}>
-					<span className={'word'}>{'INVEST'}</span>
-					<span className={'word'}>{'LOCK'}</span>
-					<span className={'word'}>{'EARN'}</span>
-					<span className={'word'}>{'CHILL'}</span>
+					<span className={'word'}>{'INNOVATIVE'}</span>
+					<span className={'word'}>{'YIELD'}</span>
+					<span className={'word'}>{'PRODUCTS'}</span>
+					<span className={'word'}>{'FOR|ALL'}</span>
 				</p>
 			</div>
 		</>

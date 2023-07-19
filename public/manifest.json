@@ -5,23 +5,23 @@
 	"iconPath": "./favicons/favicon.svg",
 	"locale": "en-US",
 	"uri": "https://future-ftr.io/",
-	"og": "https://yearn.finance/og.png",
+	"og": "./favicons/logo192.png",
 	"twitter": "@iearnfinance",
 	"github": "https://github.com/yearn/yearn.fi",
 	"icons": [
 		{
-			"src": "./favicons/android-icon-192x192.png",
+			"src": "./favicons/logo192.png",
 			"sizes": "192x192",
 			"type": "image/png",
 			"purpose": "any maskable"
 		},
 		{
-			"src": "./favicons/android-icon-144x144.png",
+			"src": "./favicons/logo192.png",
 			"sizes": "144x144",
 			"type": "image/png"
 		},
 		{
-			"src": "./favicons/android-icon-512x512.png",
+			"src": "./favicons/logo192.png",
 			"sizes": "512x512",
 			"type": "image/png"
 		}

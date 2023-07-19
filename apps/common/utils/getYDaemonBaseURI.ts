@@ -14,3 +14,15 @@ export function useYDaemonBaseURI({chainID}: TProps): {
 
 	return {yDaemonBaseUri: `${baseUri}/${chainID}`};
 }
+
+
+export function useYDaemonBaseURIFTR(): {
+	ftrDaemonBaseUri: string;
+} {
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	const {settings} = useSettings();
+
+	const baseUri = String(process.env.FTR_BASE_URI);
+
+	return {ftrDaemonBaseUri: baseUri};
+}

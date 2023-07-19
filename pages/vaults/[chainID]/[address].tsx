@@ -17,8 +17,9 @@ import {toAddress} from '@yearn-finance/web-lib/utils/address';
 import CHAINS from '@yearn-finance/web-lib/utils/web3/chains';
 import TokenIcon from '@common/components/TokenIcon';
 import { OrcaWhirlpoolClient } from "@orca-so/whirlpool-sdk";
+
 import {useYearn} from '@common/contexts/useYearn';
-import {useFetch} from '@common/hooks/useFetch';
+import {useFetch,useFetchFTR} from '@common/hooks/useFetch';
 import {type TYDaemonVault, yDaemonVaultSchema} from '@common/schemas/yDaemonVaultsSchemas';
 import {variants} from '@common/utils/animations';
 import {useYDaemonBaseURI} from '@common/utils/getYDaemonBaseURI';
@@ -97,7 +98,7 @@ const products_website_names=["stSOL/USDC Whirlpool","RLB/USDC Whirlpool","wBTC/
 
 const ftr_token_multiplier=1000000000;
 const usdc_token_multiplier=1000000;
-const fr_token_multiplier=1000000000;
+const fr_token_multiplier=1000000;
 
 
 
@@ -127,7 +128,7 @@ const getTokenAccountBalance = async (mint_ta)=>{
 function Index(): ReactElement | null {
 	const {address, isActive} = useWeb3();
 	const {safeChainID} = useChainID();
-	const {vaults} = useYearn();
+  let {vaults, vaultsMigrations, vaultsRetired, isLoadingVaultList,ftr_vaults_data} = useYearn();
 	const router = useRouter();
 	const [userHasToSetup, setUserHasToSetup] = useState("Startit");
 	const [underlyingUserAddy, setUnderlyingUserAddy] = useState("Startit");
@@ -139,7 +140,8 @@ function Index(): ReactElement | null {
 	const [ftr_user_addy, set_ftr_user_addy] = useState("0");
 	
 	const [underlyingInVaultAmount, setUnderlyingInVaultAmount] = useState(0);
-	const [usdcInVaultAmount, setUsdcInVaultAmount] = useState(0);
+  const [usdcInVaultAmount, setUsdcInVaultAmount] = useState(0);
+  const [availableUsdcInVaultAmount, setAvailableUsdcInVaultAmount] = useState(0);
 	const [wp_lp_underlying_position, set_wp_lp_underlying_position] = useState(0);
 	const [wp_lp_usdc_position, set_wp_lp_usdc_position] = useState(0);
 	const [user_position_ptf, set_user_position_ptf] = useState(0);
@@ -149,6 +151,8 @@ function Index(): ReactElement | null {
 	const [button_message, set_button_message] = useState("Deposit");
 	const [is_busy, set_is_busy] = useState(false);
 	const [maturity_price, set_maturity_price] = useState(0);
+
+  const [fully_loaded, set_fully_loaded] = useState(false);
   	const [user_whirpool_mint_found, set_user_whirpool_mint_found] = useState("0");
   	const [additionnal_info_product, set_additionnal_info_product] = useState("0");
   	
@@ -157,35 +161,90 @@ function Index(): ReactElement | null {
 
 
 	let vaults_ftrr: TDict<TYDaemonVault>={}
-	vaults_ftrr["0x3A51269e0707A3416044bad5066858A12198fcf7"]=
-		{"address":"0x3A51269e0707A3416044bad5066858A12198fcf7",
-		"ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
-		"ftr_type":"Distributor",
-		"ftr_pool_id":"DeKY5iwoYLgKzufMoGkU8ZccjiZKWb4KDdF6BX2XZv25",
-		"type":"Automated","symbol":"stSOL automated LP","display_symbol":"Onchain Funding Arbitrage","formated_symbol":"Onchain Funding Arbitrage","name":"Onchain Funding Arbitrage","display_name":"Onchain Funding Arbitrage","formated_name":"Onchain Funding Arbitrage","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png","version":"0.4.6","category":"Volatile","inception":1675027391,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"Onchain Funding Arbitrage","display_symbol":"CLEVETH-f",
-		"description":"This vault runs a funding arbitrage strategy. The vault's funds can be deployed on Drift Zeta or Mango markets. The vault does not hold any market exposure. The vault is rigorously hedged. The yield presented is a 14 days estimation. The yield is floating. There is no guarantee about the future yield created by this vault.","icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},"tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4543.2132083857305,"tvl_delegated":0,"tvl":4543.2132083857305,"price":296.529102},
-		"apy":{"type":"crv","gross_apr":0.7151501957902291,"net_apy":0.89569016529357,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
-		"details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
-		"strategies":[],
-		"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
-		
 
-	vaults_ftrr["0x3a51269e0707A3416044BAD5066858a12198fcf6"]=
-		{"address":"0x3a51269e0707A3416044BAD5066858a12198fcf6",
-		"ftr_sc_addy":"5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3",
-		"ftr_type":"Whirlpool",
-		"ftr_pool_id":"hehe3",
-		"type":"Automated","symbol":"stSOL automated LP","display_symbol":"stSOL automated LP","formated_symbol":"stSOLLP","name":"stSOL automated LP","display_name":"stSOL automated LP","formated_name":"stSOL automated LP","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png","version":"0.4.6","category":"Volatile","inception":1675027391,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
 
-		"description":"This vault exploits a proprietary market making strategy, fully onchain, relying on orca Whirlpools. Your account is segregated from the other users accounts. Your funds are available at any time",
+  let funding_arb_apr=0
+  let funding_arb_tvl=0
+  let funding_arb_cap=90
+  if (ftr_vaults_data){
+    console.log("DATAAAAA MAIN INDEX")
+    console.log(ftr_vaults_data)
+    funding_arb_apr=Number(ftr_vaults_data["FloatingRate"]["apr"])/100
+    funding_arb_tvl=ftr_vaults_data["FloatingRate"]["tvl"]
+  }
 
-		"icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},"tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4543.2132083857305,"tvl_delegated":0,"tvl":4543.2132083857305,"price":296.529102},
-		"apy":{"type":"crv","gross_apr":0.7151501957902291,"net_apy":0.89569016529357,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
-		"details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
-		"strategies":[],
-		"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
-		
 
+
+  vaults_ftrr["0x3A51269e0707A3416044bad5066858A12198fcf7"]=
+    {"address":"0x3A51269e0707A3416044bad5066858A12198fcf7",
+    "ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
+    "ftr_type":"Distributor",
+    "ftr_pool_id":"DeKY5iwoYLgKzufMoGkU8ZccjiZKWb4KDdF6BX2XZv25",
+    "type":"Automated",
+    "symbol":"FundingArb",
+    "display_symbol":"Onchain Funding Arbitrage",
+    "formated_symbol":"Onchain Funding Arbitrage",
+    "name":"Onchain Funding Arbitrage",
+    "display_name":"Onchain Funding Arbitrage",
+    "formated_name":"Onchain Funding Arbitrage",
+    "icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
+    "version":"0.4.6",
+    "category":"Volatile",
+    "inception":funding_arb_cap,
+    "decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,
+    "token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],
+    "name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"FundingArb","type":"Curve LP",
+    "display_name":"Onchain Funding Arbitrage","display_symbol":"FundingArb",
+    "description":"This vault runs a floating rate funding arbitrage strategy. The performance of this vault is variable and there is no guarantee about the future yield of this vault being positive. The vault's funds can be deployed on Drift, Zeta, Mango Markets or Bybit. The vault does not hold any market exposure (its a rigorous 0 delta vault). The performance presented is a 7 days estimation, net of fees. [RISKS] The vaults holds different risks, including but not limited to : Funding rate risk, execution risk, Solana chain downtime, Drift-Mango-Zeta smart contract risk, Bybit counterparty risk, liquidity gap risk. This vault uses a leverage from 2 to 4. The management of the funds of this vault is centralized : this is not a fully trustless vault. The funds of this vault will be managed by the following account : Gwirg7qtpxVmvnFjrXj1vEGiv4qK6Yv3Hefush9xkz2w. [FEES] The vault charges a 0.3% deposit fee. This vault also locks 2% of the amounts invested (used to purchase and lock FTR). This FTR amount is unlocked when you redeem the product, which can lead into a positive / negative peformance depending on the FTR price change over the period. The vault implements a 10% performance fee (applied on your positive P&L).",
+      
+    "icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},
+    "tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4543.2132083857305,"tvl_delegated":0,"tvl":funding_arb_tvl,"price":296.529102},
+    "apy":{"type":"crv","gross_apr":funding_arb_apr*0.9,"net_apy":funding_arb_apr,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},
+    "points":{"week_ago":0,"month_ago":0,"inception":20},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+    "details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+    "strategies":[{"address":"0xEE341d18939562D6D8A34ea31Fe9BdA55bACb947","name":"StrategyCurveBoostedFactory-CLEVETH-f","displayName":"Curve Boost","description":"Supplies {{token}} to [Curve Finance](https://curve.fi) and stakes it in gauge to collect any available tokens and earn enhanced CRV rewards thanks to [Yearn's locked CRV boost](https://docs.yearn.finance/getting-started/guides/how-boost-works). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"15041529720494645680","totalLoss":"0","totalGain":"11587075871941007617","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"15041529720494645680","creditAvailable":"279776612486223422","debtOutstanding":"0","expectedReturn":"1549944828288110449","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1686264683,"activation":1675027391,"keepCRV":0,"debtRatio":10000,"debtLimit":0,"withdrawalQueuePosition":1,"doHealthCheck":true,"inQueue":true,"emergencyExit":false,"isActive":true},"risk":{"riskScore":2,"riskGroup":"Curve Boosted Factory","riskDetails":{"TVLImpact":1,"auditScore":5,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Yellow","currentTVL":"158570117.28708875","availableTVL":"-61346114.77387886","currentAmount":"463000629.32106197","availableAmount":"-2013.3633712140868"}}},{"address":"0xd73B085C715ADeE2551f5bAbc28200E79f739b0A","name":"StrategyConvexFactory-CLEVETH-f","displayName":"Convex Reinvest","description":"Supplies {{token}} to [Convex Finance](https://www.convexfinance.com/stake) boosted by Convex's veCRV to earn CRV and CVX (and any other available tokens). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"0","totalLoss":"0","totalGain":"0","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"0","creditAvailable":"10","debtOutstanding":"0","expectedReturn":"0","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Convex Finance","Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1675027391,"activation":1675027391,"keepCRV":0,"debtLimit":0,"withdrawalQueuePosition":0,"doHealthCheck":false,"inQueue":true,"emergencyExit":false,"isActive":false},"risk":{"riskScore":2,"riskGroup":"Convex Factory","riskDetails":{"TVLImpact":0,"auditScore":4,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Green","currentTVL":"0","availableTVL":"10","currentAmount":"0","availableAmount":"10"}}}],"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
+    
+  if (false){
+    vaults_ftrr["0x3a51269E0707A3416044bad5066858A12198fCf6"]=
+      {"address":"0x3a51269E0707A3416044bad5066858A12198fCf6",
+      "ftr_sc_addy":"5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3",
+      "ftr_type":"Whirlpool",
+      "ftr_pool_id":"hehe3",
+      "type":"Automated","symbol":"stSOL automated LP","display_symbol":"stSOL automated LP","formated_symbol":"stSOLLP","name":"stSOL automated LP","display_name":"stSOL automated LP","formated_name":"stSOL automated LP","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png","version":"0.4.6","category":"Volatile","inception":1675027391,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f","description":"This token represents a Curve v2 crypto pool. Holders earn fees from users trading in the pool, and can also deposit the LP to Curve's gauges to earn CRV emissions. This crypto pool contains CLEV and ETH. Please be aware that as crypto pools are composed of differently-priced assets, they are subject to impermanent loss.","icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},"tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4543.2132083857305,"tvl_delegated":0,"tvl":4543.2132083857305,"price":296.529102},
+      "apy":{"type":"crv","gross_apr":0,"net_apy":0,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+      "details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+      "strategies":[{"address":"0xEE341d18939562D6D8A34ea31Fe9BdA55bACb947","name":"StrategyCurveBoostedFactory-CLEVETH-f","displayName":"Curve Boost","description":"Supplies {{token}} to [Curve Finance](https://curve.fi) and stakes it in gauge to collect any available tokens and earn enhanced CRV rewards thanks to [Yearn's locked CRV boost](https://docs.yearn.finance/getting-started/guides/how-boost-works). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"15041529720494645680","totalLoss":"0","totalGain":"11587075871941007617","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"15041529720494645680","creditAvailable":"279776612486223422","debtOutstanding":"0","expectedReturn":"1549944828288110449","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1686264683,"activation":1675027391,"keepCRV":0,"debtRatio":10000,"debtLimit":0,"withdrawalQueuePosition":1,"doHealthCheck":true,"inQueue":true,"emergencyExit":false,"isActive":true},"risk":{"riskScore":2,"riskGroup":"Curve Boosted Factory","riskDetails":{"TVLImpact":1,"auditScore":5,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Yellow","currentTVL":"158570117.28708875","availableTVL":"-61346114.77387886","currentAmount":"463000629.32106197","availableAmount":"-2013.3633712140868"}}},{"address":"0xd73B085C715ADeE2551f5bAbc28200E79f739b0A","name":"StrategyConvexFactory-CLEVETH-f","displayName":"Convex Reinvest","description":"Supplies {{token}} to [Convex Finance](https://www.convexfinance.com/stake) boosted by Convex's veCRV to earn CRV and CVX (and any other available tokens). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"0","totalLoss":"0","totalGain":"0","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"0","creditAvailable":"0","debtOutstanding":"0","expectedReturn":"0","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Convex Finance","Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1675027391,"activation":1675027391,"keepCRV":0,"debtLimit":0,"withdrawalQueuePosition":0,"doHealthCheck":false,"inQueue":true,"emergencyExit":false,"isActive":false},"risk":{"riskScore":2,"riskGroup":"Convex Factory","riskDetails":{"TVLImpact":0,"auditScore":4,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Green","currentTVL":"0","availableTVL":"0","currentAmount":"0","availableAmount":"0"}}}],"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
+      
+  vaults_ftrr["0x3A51269e0707A3416044bad5066858A12198fcf7"]=
+    {"address":"0x3A51269e0707A3416044bad5066858A12198fcf7",
+    "ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
+    "ftr_type":"Distributor",
+    "ftr_pool_id":"DeKY5iwoYLgKzufMoGkU8ZccjiZKWb4KDdF6BX2XZv25",
+    "type":"Automated","symbol":"stSOL automated LP","display_symbol":"Onchain Funding Arbitrage","formated_symbol":"Onchain Funding Arbitrage","name":"Onchain Funding Arbitrage","display_name":"Onchain Funding Arbitrage","formated_name":"Onchain Funding Arbitrage","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png","version":"0.4.6","category":"Volatile","inception":1675027391,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"Onchain Funding Arbitrage","display_symbol":"CLEVETH-f",
+    "description":"This vault runs a funding arbitrage strategy. The vault's funds can be deployed on Drift Zeta or Mango markets. The vault does not hold any market exposure. The vault is rigorously hedged. The yield presented is a 14 days estimation. The yield is floating. There is no guarantee about the future yield created by this vault.","icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},"tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4543.2132083857305,"tvl_delegated":0,"tvl":4543.2132083857305,"price":296.529102},
+    "apy":{"type":"crv","gross_apr":0.7151501957902291,"net_apy":0.89569016529357,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+    "details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+    "strategies":[],
+    "migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
+    
+
+  vaults_ftrr["0x3a51269e0707A3416044BAD5066858a12198fcf6"]=
+    {"address":"0x3a51269e0707A3416044BAD5066858a12198fcf6",
+    "ftr_sc_addy":"5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3",
+    "ftr_type":"Whirlpool",
+    "ftr_pool_id":"hehe3",
+    "type":"Automated","symbol":"stSOL automated LP","display_symbol":"stSOL automated LP","formated_symbol":"stSOLLP","name":"stSOL automated LP","display_name":"stSOL automated LP","formated_name":"stSOL automated LP","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png","version":"0.4.6","category":"Volatile","inception":1675027391,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
+
+    "description":"This vault exploits a proprietary market making strategy, fully onchain, relying on orca Whirlpools. Your account is segregated from the other users accounts. Your funds are available at any time",
+
+    "icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},"tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4543.2132083857305,"tvl_delegated":0,"tvl":4543.2132083857305,"price":296.529102},
+    "apy":{"type":"crv","gross_apr":0.7151501957902291,"net_apy":0.89569016529357,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+    "details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+    "strategies":[],
+    "migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
+    
+
+      }
 
 	let product_name="stSOL/USDC Whirlpool"
 
@@ -208,44 +267,48 @@ function Index(): ReactElement | null {
 	//---------------------------------------  LOADING ANCHOR ENV  --------------------------------
 
 
-	const wallet = useAnchorWallet();
-	const connected=wallet;
-	
-	useEffect(() => {
-	    if (wallet?.publicKey?.toString() && connected) {
-	      loadAnchor();
-	
-	    }
-	  }, [wallet?.publicKey?.toString() || "", connected]);
-
-	const loadAnchor = async () => {
-
-		let loc:any=RandomIdl;
-		if (vault["ftr_sc_addy"]=="3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E")
-			{loc=RandomIdlV2}
-	    const programId = new PublicKey(
-	      vault["ftr_sc_addy"],
-	    );
-
-	    const connection = new web33.Connection("https://rpc.helius.xyz/?api-key=f887483d-4017-4d59-a456-3a3638be952d", {
-	      commitment: "processed",
-	    });
 
 
-	    const provider = new anchor.AnchorProvider(connection, wallet, {
-	      commitment: "processed",
-	    });
+  const wallet = useAnchorWallet();
+  const connected=wallet;
+  
+  useEffect(() => {
+      if (wallet?.publicKey?.toString() && connected) {
+        loadAnchor();
+  
+      }
+    }, [wallet?.publicKey?.toString() || "", connected]);
+
+  const loadAnchor = async () => {
+
+    let loc:any=RandomIdl;
+    if (vault["ftr_sc_addy"]=="3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E")
+      {loc=RandomIdlV2}
+      const programId = new PublicKey(
+        vault["ftr_sc_addy"],
+      );
+
+      const connection = new web33.Connection("https://rpc.helius.xyz/?api-key=f887483d-4017-4d59-a456-3a3638be952d", {
+        commitment: "processed",
+      });
 
 
-	    const newProgram = new anchor.Program(loc, programId, provider);
-		setProgram(newProgram);
-	  	console.log("Updating stuff, Anchor loaded")
-	  	if (vault["ftr_sc_addy"]=="3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E")
-			{UpdateAccountDistributor("stSOL/USDC Whirlpool",newProgram)}
-		else{
-			    UpdateAccount("stSOL/USDC Whirlpool",newProgram)
-			}
-	  };
+      const provider = new anchor.AnchorProvider(connection, wallet, {
+        commitment: "processed",
+      });
+
+
+      const newProgram = new anchor.Program(loc, programId, provider);
+    setProgram(newProgram);
+      console.log("Updating stuff, Anchor loaded")
+      if (vault["ftr_sc_addy"]=="3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E")
+      {UpdateAccountDistributor("stSOL/USDC Whirlpool",newProgram)}
+    else{
+          UpdateAccount("stSOL/USDC Whirlpool",newProgram)
+      }
+    };
+
+
 
 	//---------------------------------------  END LOADING ANCHOR ENV  --------------------------------
 
@@ -255,41 +318,68 @@ const MainButtonIsClicked = async (e : any,e2 : any) => {
   console.log(e)
   if (true){
       if (vault["ftr_sc_addy"]=="5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3"){
-      	if(button_message=="Create Account")
-  	    {
-  	    	createUserAccount()
-  	    }
+        if(button_message=="Create Account")
+        {
+          createUserAccount()
+        }
   
-  	    else if (e)
-  	    {
-  	    	InvestFixedRate()
-  		}
+        else if (e)
+        {
+          InvestFixedRate()
+      }
   
-  	    else if(!e)
-  	    {
-  	    	RedeemFixedRate()
-  	    }
-  
-  
-  	}
-  
-  	if (vault["ftr_sc_addy"]=="3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E"){
-  		if(button_message=="Create Account")
-  	    {
-  	    	createUserAccountDistributor()
-  	    }
-  	    else if (e)
-  	    {
-  	    	InvestFixedRateDistributor()
-  		}
-  
-  	    else if(!e)
-  	    {
-  	    	RedeemFixedRateDistributor()
-  	    }
+        else if(!e)
+        {
+          RedeemFixedRate()
+        }
   
   
-  	}
+    }
+  
+    if (vault["ftr_sc_addy"]=="3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E"){
+      if(button_message=="Create Account")
+        {
+          createUserAccountDistributor()
+        }
+        else if (e)
+        {
+          InvestFixedRateDistributor()
+      }
+  
+        else if(!e)
+        {
+
+          if(availableUsdcInVaultAmount<user_input_2){
+              toastit("Status:  Sending a withdraw request. Your funds should be available in 12-48h")
+              RequestWithdrawalDistributor()
+
+          }else{RedeemFixedRateDistributor()}
+        }
+  
+  
+    }
+  }
+}
+
+
+
+const UpdateIsClicked = async (e : any,e2 : any) => {
+  console.log("STAAAARTING CUSTOM REFRESH")
+  console.log(e)
+  if (program){
+    if (vault["ftr_sc_addy"]=="5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3"){
+      UpdateAccount("stSOL/USDC Whirlpool",program)
+  
+  
+      }
+  
+    if (vault["ftr_sc_addy"]=="3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E"){
+       UpdateAccountDistributor("stSOL/USDC Whirlpool",program)
+  
+  
+      }
+  }else{
+    console.log("No program ready")
   }
 }
 
@@ -1330,6 +1420,7 @@ const createUserAccount = async () => {
 				const signatureg = await transactiong_r.buildAndExecute();
 				toastit("Status : Successfully created user accounts, updating in 30s, please wait")
 				toastit("Tx id : "+signatureg)
+
 				await delay(30000);
 				UpdateAccount("stSOL/USDC Whirlpool",program)
 				console.log(signatureg)
@@ -1402,6 +1493,24 @@ const UpdateAccountDistributor = async (product_name:any,local_program:any) => {
 				console.log((user_account_real.possessedFixedRate/1000).toString());
 				set_fixed_rate_locked_user((user_account_real.possessedFixedRate/fr_token_multiplier).toString());
 				set_ftr_locked_user((user_account_real.lockedFtr/ftr_token_multiplier).toString());
+
+        const [vaultFreeCollateralAta, vaultFreeCollateralAtaBump] =
+        web3.PublicKey.findProgramAddressSync(
+          [
+            Buffer.from("free"),
+            user.toBuffer(),
+            account.collateralMint.toBuffer(),
+          ],
+          prgrm.programId
+        );
+
+        let userUSDCavailable = await getTokenAccountBalance(vaultFreeCollateralAta);
+        let available_to_withdraw=(Math.round(((Number(userUSDCavailable.amount)/usdc_token_multiplier))*100)/100);
+        console.log("USDC AVAILABLE ")
+        console.log(available_to_withdraw)
+        setAvailableUsdcInVaultAmount(available_to_withdraw)
+
+
 			}catch{ 
 				console.log("Error retreiving user details")}
 			}
@@ -1422,6 +1531,7 @@ const UpdateAccountDistributor = async (product_name:any,local_program:any) => {
 			set_maturity_price(account.priceContract/1000000);
 			console.log("Maturity date NEW")
 			console.log(account.maturityTime)
+
 
 
 
@@ -1565,8 +1675,10 @@ const UpdateAccountDistributor = async (product_name:any,local_program:any) => {
 
 
 		setUnderlyingUserAmount(user_fixedrate_in_wallet)
+    let contract_price=account.priceContract/1000000
+    console.log("USDC LIABILITY",contract_price,user_fixedrate_in_wallet)
+    setUsdcInVaultAmount(user_fixedrate_in_wallet*contract_price)
 		setUsdcUserAmount(user_usdc_in_wallet)
-	
 
 		const tt="None"//new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit'}).format(account.maturityTime*1000)
 		console.log("Product APY (last 15 days) : "+String(maturity_price_f)+"% | Auto Roll Date : None | Available product to purchase : "+String(Math.round(Number(av_fr_amt.amount)/fr_token_multiplier).toString()) +" Products | Available USDC to withdraw : "+String(Math.round(Number(av_usdc_amt.amount)/usdc_token_multiplier).toString())+" | Inception fee : 0.3%")
@@ -1724,9 +1836,9 @@ const InvestFixedRateDistributor = async () => {
 
 
 
-	let number_of_fr=Number(user_input_2)*1000000/maturity_price;
-	console.log("INPUT USER")
-	console.log(number_of_fr)
+  let number_of_fr=Number(user_input_2)*1000000/maturity_price;
+  console.log("INPUT USER")
+  console.log(number_of_fr)
 
     const whirlpool = await whirlpoolClient.getPool(relevant_pool_pk, true);
     const outputTokenQuote = await swapQuoteByOutputToken(
@@ -1750,7 +1862,7 @@ const InvestFixedRateDistributor = async () => {
       if(true){
                 
 
-      await program.rpc.userBuysProduct(
+      let result_it=await program.rpc.userBuysProduct(
           new anchor.BN(number_of_fr),outputTokenQuote.sqrtPriceLimit,{
           accounts: {
           contractState:pk_poolAccount,
@@ -1779,11 +1891,93 @@ const InvestFixedRateDistributor = async () => {
         )
               console.log("WE GET THEEERE 4")
         toastit("Status : Success investing product")
+        toastit("Tx ID : "+result_it)
           } 
 
         } 
 }
     toastit("Status : End Investing Product")
+
+
+
+  }
+  
+
+
+
+
+
+const RequestWithdrawalDistributor = async () => {
+  toastit("Status : Started requesting withdrawal")
+  if (program!=undefined){
+    const prgrm:anchor.Program=program;
+    const { provider } = prgrm;
+    let authority=provider.wallet.publicKey;
+
+
+    const pk_poolAccount=new anchor.web3.PublicKey(current_pool_addy);
+    const account:any = await program.account.contractState.fetch(pk_poolAccount);
+    console.log("-------------------------")
+    console.log("INVESTED FR");
+
+ 
+
+
+      let mintPublicKey_ftr = new web3.PublicKey("HEhMLvpSdPviukafKwVN8BnBUTamirptsQ6Wxo5Cyv8s"); 
+      let relevant_pool_pk=new web3.PublicKey("2Dts6QkFFxcPeiKECfBxfjrqEJtRy7sSK8G2mKs8Xa3P")
+      let mintPublicKey_usdc = new web3.PublicKey(account.collateralMint.toString());  
+      let mintPublicKey_fixedRate = new web3.PublicKey(account.contractMint.toString());  
+      const solana_t = new web33.Connection("https://rpc.helius.xyz/?api-key=f887483d-4017-4d59-a456-3a3638be952d");
+
+
+
+     if(true){
+
+                
+
+
+
+
+
+    const [userStateKey, userStateKeyBump] =
+      web3.PublicKey.findProgramAddressSync(
+        [pk_poolAccount.toBuffer(), authority.toBuffer()],
+        program.programId
+      );
+
+
+
+
+
+
+  let number_of_fr=Number(user_input_2)*1000000/maturity_price;
+  console.log("INPUT USER")
+  console.log(number_of_fr)
+
+  console.log("teeeer")
+      if(true){
+                
+
+      let resultit=await program.rpc.userRequestsWithdrawal(
+          new anchor.BN(number_of_fr),{
+          accounts: {
+          userAuthority: provider.wallet.publicKey,            
+          contractState:pk_poolAccount,
+          userState:userStateKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        },
+
+        }
+
+        )
+              console.log("WE GET THEEERE 4")
+        toastit("Status : Success requesting withdrawal")
+        toastit("Tx ID: "+resultit)
+          } 
+
+        } 
+}
+    toastit("Status : End requesting withdrawal")
 
 
 
@@ -1990,7 +2184,7 @@ toastit("Status : Started setting up onchain accounts")
     if (program!=undefined){
      const prgrm:anchor.Program=program;
      const { provider } = prgrm;
-     const pk_poolAccount=new anchor.web3.PublicKey(productAddy);
+     const pk_poolAccount=new anchor.web3.PublicKey(current_pool_addy);
      const account:any = await program.account.contractState.fetch(pk_poolAccount);
     
 
@@ -2113,7 +2307,7 @@ toastit("Status : Started setting up onchain accounts")
 
 
       
-all_instructions.push(inituser)
+            all_instructions.push(inituser)
             const transactiong_r = new TransactionBuilder(program, program.provider.wallet)
              
             .addInstruction({instructions: all_instructions, cleanupInstructions: [], signers: []});
@@ -2121,6 +2315,8 @@ all_instructions.push(inituser)
    
             const signatureg = await transactiong_r.buildAndExecute();
             console.log(signatureg)
+            toastit("Status : Successfully created user accounts")
+            toastit("Tx ID: "+signatureg)
 
 
 
@@ -2155,9 +2351,9 @@ all_instructions.push(inituser)
 
 
 
-  toastit("Status : Successfully creater user accounts")
-  await delay(1000);
-  UpdateAccount("stSOL/USDC Whirlpool",program)
+
+  await delay(3000);
+  UpdateAccountDistributor("stSOL/USDC Whirlpool",program)
 
 
       } catch (err) {
@@ -2177,8 +2373,9 @@ all_instructions.push(inituser)
 
 	useEffect((): void => {
 
-		if (vault && !currentVault) {
+		if ((vault && !currentVault) || (ftr_vaults_data && !fully_loaded)) {
 			set_currentVault(vault);
+      set_fully_loaded(true)
 		}
 	}, [currentVault, vault]);
 
@@ -2235,14 +2432,12 @@ all_instructions.push(inituser)
 					animate={'enter'}
 					variants={variants}
 					className={'z-50 -mt-6 h-12 w-12 cursor-pointer md:-mt-36 md:h-[72px] md:w-[72px]'}>
-					<TokenIcon
-						chainID={currentVault?.chainID || safeChainID}
-						token={currentVault?.token} />
+
 				</motion.div>
 			</header>
 
 			<section className={'mt-4 grid w-full grid-cols-12 pb-10 md:mt-0'}>
-				<VaultDetailsHeader vault={currentVault} />
+				
 				<ActionFlowContextApp currentVault={currentVault}>
 					<WithSolverContextApp>
 						<VaultActionsTabsWrapper currentVault={currentVault} 
@@ -2256,6 +2451,7 @@ all_instructions.push(inituser)
 						setUserInput2={set_user_input_2}
 						button_message={button_message}
 						button_is_clicked={MainButtonIsClicked}
+            update_is_clicked={UpdateIsClicked}
 
 						is_busy={is_busy}
 						other_token_name={"STSOL"}

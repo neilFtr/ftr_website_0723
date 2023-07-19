@@ -103,6 +103,10 @@ function ListHero<T extends string>({
 	set_searchValue,
 	switchProps
 }: TListHero<T>): ReactElement {
+	let useless1=searchLabel;
+	let useless2=searchPlaceholder;
+	let useless3=switchProps;
+
 	return (
 		<div className={'flex flex-col items-start justify-between space-x-0 px-4 pb-2 pt-4 md:px-10 md:pb-8 md:pt-10'}>
 			<div className={'mb-6'}>
@@ -113,24 +117,7 @@ function ListHero<T extends string>({
 				</h2>
 			</div>
 
-			<div className={'hidden w-full flex-row items-center justify-between space-x-4 md:flex'}>
-				<SearchBar
-					searchLabel={searchLabel}
-					searchPlaceholder={searchPlaceholder}
-					searchValue={searchValue}
-					set_searchValue={set_searchValue} />
 
-				{!!switchProps && (
-					<div className={'mr-4 mt-7 flex h-full min-w-fit flex-row'}>
-						<small className={'mr-2'}>{'Hide gauges with 0 votes'}</small>
-						<Switch {...switchProps} />
-					</div>
-				)}
-
-				<DesktopCategories
-					categories={categories}
-					onSelect={onSelect} />
-			</div>
 
 			<div className={'flex w-full flex-row space-x-2 md:hidden md:w-2/3'}>
 				<select

@@ -29,6 +29,16 @@ export const RandomIdlV2 = {
           "isSigner": false
         },
         {
+          "name": "ftrWhirlpool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ftrMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "collateralMint",
           "isMut": false,
           "isSigner": false
@@ -310,6 +320,37 @@ export const RandomIdlV2 = {
       ]
     },
     {
+      "name": "userRequestsWithdrawal",
+      "accounts": [
+        {
+          "name": "userAuthority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "contractState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "adminWithdraws",
       "accounts": [
         {
@@ -407,6 +448,42 @@ export const RandomIdlV2 = {
         {
           "name": "collateralMint",
           "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "adminSetsVaultCap",
+      "accounts": [
+        {
+          "name": "contractAuthority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "contractState",
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -800,6 +877,11 @@ export const RandomIdlV2 = {
       "code": 6022,
       "name": "LeakInFAccount",
       "msg": "LeakInFreeAccountUser"
+    },
+    {
+      "code": 6023,
+      "name": "MaxCapReached",
+      "msg": "MaxCapReached"
     }
   ],
   "metadata": {
