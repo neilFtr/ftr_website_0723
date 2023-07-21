@@ -10,12 +10,13 @@ import {useTokenPrice} from '@common/hooks/useTokenPrice';
 
 import type {ReactElement} from 'react';
 
-function VaultDetailsQuickActionsTo(): ReactElement {
+function VaultDetailsQuickActionsTo({contract_price}:{contract_price:any}): ReactElement {
 	const {isActive} = useWeb3();
 	const {currentVault, possibleOptionsTo, actionParams, onUpdateSelectedOptionTo, isDepositing} = useActionFlow();
 	const {expectedOut, isLoadingExpectedOut} = useSolver();
 	const selectedOptionToPricePerToken = useTokenPrice(toAddress(actionParams?.selectedOptionTo?.value));
-
+	console.log("contract_price")
+	console.log(contract_price)
 	function renderMultipleOptionsFallback(): ReactElement {
 		return (
 			<Dropdown
@@ -52,7 +53,9 @@ function VaultDetailsQuickActionsTo(): ReactElement {
 						</div>
 					</div>
 				</Renderable>
-
+				<legend className={'font-number hidden text-xs text-neutral-600 md:inline'} suppressHydrationWarning>
+					{` Price : ${Number(contract_price)}`}
+				</legend>
 			</div>
 
 

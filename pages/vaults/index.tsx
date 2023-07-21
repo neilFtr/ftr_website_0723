@@ -89,11 +89,13 @@ function Index(): ReactElement {
 	let funding_arb_apr=0
 	let funding_arb_tvl=0
 	let funding_arb_cap=90
+	let last_price=100
 	if (ftr_vaults_data){
 		console.log("DATAAAAA MAIN INDEX")
 		console.log(ftr_vaults_data)
 		funding_arb_apr=Number(ftr_vaults_data["FloatingRate"]["apr"])/100
 		funding_arb_tvl=ftr_vaults_data["FloatingRate"]["tvl"]
+		last_price=ftr_vaults_data["FloatingRate"]["last_price"]
 	}
 	let vaults_ftrr: TDict<TYDaemonVault>={}
 
@@ -111,7 +113,7 @@ function Index(): ReactElement {
 		"display_name":"Onchain Funding Arbitrage",
 		"formated_name":"Onchain Funding Arbitrage",
 		"icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
-		"version":"0.4.6",
+		"version":String(last_price),
 		"category":"Volatile",
 		"inception":funding_arb_cap,
 		"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,
@@ -344,7 +346,7 @@ function Index(): ReactElement {
 						{label: 'Token', value: 'name', sortable: true},
 						{label: 'APY', value: 'apy', sortable: true, className: 'col-span-2'},
 						{label: 'Cap', value: 'available', sortable: true, className: 'col-span-2'},
-						{label: 'Deposited', value: 'deposited', sortable: true, className: 'col-span-2'},
+						{label: 'InceptionPerf', value: 'deposited', sortable: true, className: 'col-span-2'},
 						{label: 'TVL', value: 'tvl', sortable: true, className: 'col-span-2'}
 					]} />
 

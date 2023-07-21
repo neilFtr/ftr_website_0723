@@ -166,13 +166,14 @@ function Index(): ReactElement | null {
   let funding_arb_apr=0
   let funding_arb_tvl=0
   let funding_arb_cap=90
+  let last_price=100
   if (ftr_vaults_data){
     console.log("DATAAAAA MAIN INDEX")
     console.log(ftr_vaults_data)
     funding_arb_apr=Number(ftr_vaults_data["FloatingRate"]["apr"])/100
     funding_arb_tvl=ftr_vaults_data["FloatingRate"]["tvl"]
+    last_price=ftr_vaults_data["FloatingRate"]["last_price"]
   }
-
 
 
   vaults_ftrr["0x3A51269e0707A3416044bad5066858A12198fcf7"]=
@@ -188,7 +189,7 @@ function Index(): ReactElement | null {
     "display_name":"Onchain Funding Arbitrage",
     "formated_name":"Onchain Funding Arbitrage",
     "icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
-    "version":"0.4.6",
+    "version":last_price,
     "category":"Volatile",
     "inception":funding_arb_cap,
     "decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,
@@ -2455,6 +2456,7 @@ toastit("Status : Started setting up onchain accounts")
 
 						is_busy={is_busy}
 						other_token_name={"STSOL"}
+            product_price={maturity_price==0?currentVault.version:maturity_price}
 						
 						 />
 					</WithSolverContextApp>

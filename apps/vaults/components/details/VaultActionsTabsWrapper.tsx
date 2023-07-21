@@ -50,7 +50,7 @@ function getCurrentTab({isDepositing, hasMigration, isRetired}: {isDepositing: b
 	return tabs.find((tab): boolean => tab.value === (isDepositing ? 0 : 1)) as TTabsOptions;
 }
 
-function VaultActionsTabsWrapper({currentVault,amount1,amount2,amount3,amount4,userInput1,userInput2,setUserInput1,setUserInput2,button_message,button_is_clicked,is_busy,other_token_name,update_is_clicked}: {currentVault: TYDaemonVault,amount1:any,amount2:any,amount3:any,amount4:any,userInput1:any,userInput2:any,setUserInput1:any,setUserInput2:any,button_message:any,button_is_clicked:any,is_busy:any,other_token_name:any,update_is_clicked:any}): ReactElement {
+function VaultActionsTabsWrapper({currentVault,amount1,amount2,amount3,amount4,userInput1,userInput2,setUserInput1,setUserInput2,button_message,button_is_clicked,is_busy,other_token_name,update_is_clicked,product_price}: {currentVault: TYDaemonVault,amount1:any,amount2:any,amount3:any,amount4:any,userInput1:any,userInput2:any,setUserInput1:any,setUserInput2:any,button_message:any,button_is_clicked:any,is_busy:any,other_token_name:any,update_is_clicked:any,product_price:any}): ReactElement {
 	
 	const {onSwitchSelectedOptions, isDepositing, actionParams, currentSolver} = useActionFlow();
 	const [possibleTabs, set_possibleTabs] = useState<TTabsOptions[]>([tabs[0], tabs[1]]);
@@ -261,7 +261,7 @@ function VaultActionsTabsWrapper({currentVault,amount1,amount2,amount3,amount4,u
 						<VaultDetailsQuickActionsFromOrca amount1={amount2} amount2={amount4} amount3={amount3} amount4={amount4} userInput1={userInput2} setUserInput1={setUserInput2} other_token_name={"USDC"}/>
 						
 						<VaultDetailsQuickActionsSwitch />
-						<VaultDetailsQuickActionsTo />
+						<VaultDetailsQuickActionsTo contract_price={product_price}/>
 						<div className={'w-full space-y-0 md:w-42 md:min-w-42 md:space-y-2'}>
 							<label className={'hidden text-base md:inline'}>&nbsp;</label>
 							<div>

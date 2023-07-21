@@ -25,8 +25,9 @@ function VaultsListRow({currentVault}: {currentVault: TYDaemonVault}): ReactElem
 
 	const {stakingRewardsByVault, positionsMap} = useStakingRewards();
 	const stakedBalance = toNormalizedValue(toBigInt(positionsMap[toAddress(stakingRewardsByVault[currentVault.address])]?.stake), currentVault.decimals);
-	const depositedAndStaked = 0
-
+	const depositedAndStaked = Number(currentVault.version);
+	console.log("currentVault.version")
+	console.log(currentVault.version)
 	const availableToDeposit = currentVault.inception;
 	return (
 		<Link key={`${currentVault.address}`} href={`/vaults/${safeChainID}/${toAddress(currentVault.address)}`}>
@@ -70,7 +71,7 @@ function VaultsListRow({currentVault}: {currentVault: TYDaemonVault}): ReactElem
 					<div className={'yearn--table-data-section-item md:col-span-2'} datatype={'number'}>
 						<label className={'yearn--table-data-section-item-label !font-aeonik'}>{'Deposited'}</label>
 						<p className={`yearn--table-data-section-item-value ${isZero(depositedAndStaked) ? 'text-neutral-400' : 'text-neutral-900'}`}>
-							{formatAmount(depositedAndStaked)}
+							{formatPercent(depositedAndStaked-100)}
 						</p>
 					</div>
 
