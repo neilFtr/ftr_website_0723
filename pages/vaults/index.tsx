@@ -96,6 +96,7 @@ function Index(): ReactElement {
 		funding_arb_apr=Number(ftr_vaults_data["FloatingRate"]["apr"])/100
 		funding_arb_tvl=ftr_vaults_data["FloatingRate"]["tvl"]
 		last_price=ftr_vaults_data["FloatingRate"]["last_price"]
+		funding_arb_cap=Number(ftr_vaults_data["FloatingRate"]["tvl"])/120*100
 	}
 	let vaults_ftrr: TDict<TYDaemonVault>={}
 
