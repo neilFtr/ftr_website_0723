@@ -324,6 +324,7 @@ const MainButtonIsClicked = async (e : any,e2 : any) => {
         {
 
           if(availableUsdcInVaultAmount<user_input_2){
+              toastit("USDC ready to be withdrawn : "+String(availableUsdcInVaultAmount))
               toastit("Status:  Sending a withdraw request. Your funds should be available in 12-48h")
               RequestWithdrawalDistributor()
 
@@ -1462,12 +1463,12 @@ const UpdateAccountDistributor = async (product_name:any,local_program:any) => {
 
 
 			try{
-				const user_account_real:any = await prgrm.account.user.fetch(user);
-				console.log((user_account_real.lockedFtr/1000).toString());
-				console.log((user_account_real.possessedFixedRate/1000).toString());
-				set_fixed_rate_locked_user((user_account_real.possessedFixedRate/fr_token_multiplier).toString());
-				set_ftr_locked_user((user_account_real.lockedFtr/ftr_token_multiplier).toString());
-
+        console.log("Checking available usdc-----------------------------")
+				const user_account_real:any = await prgrm.account.userState.fetch(user);
+console.log("Checking available usdc-----------------------------2")
+//				set_fixed_rate_locked_user((user_account_real.possessedFixedRate/fr_token_multiplier).toString());
+//				set_ftr_locked_user((user_account_real.nbFtrLocked/ftr_token_multiplier).toString());
+console.log("Checking available usdc-----------------------------3")
         const [vaultFreeCollateralAta, vaultFreeCollateralAtaBump] =
         web3.PublicKey.findProgramAddressSync(
           [
@@ -1477,16 +1478,17 @@ const UpdateAccountDistributor = async (product_name:any,local_program:any) => {
           ],
           prgrm.programId
         );
-
+        console.log(">>>>>>>>>>>>>>>>>USDC AVAILABLE ")
         let userUSDCavailable = await getTokenAccountBalance(vaultFreeCollateralAta);
         let available_to_withdraw=(Math.round(((Number(userUSDCavailable.amount)/usdc_token_multiplier))*100)/100);
-        console.log("USDC AVAILABLE ")
+        console.log(">>>>>>>>>>>>>>>>>USDC AVAILABLE ")
+        console.log(vaultFreeCollateralAta.toString())
         console.log(available_to_withdraw)
         setAvailableUsdcInVaultAmount(available_to_withdraw)
 
 
 			}catch{ 
-				console.log("Error retreiving user details")}
+				console.log("Error retreiving user details USDC")}
 			}
 
 			//------------------------- UPDATING PRODUCT DETAILS -------------------------------------------------
@@ -1631,7 +1633,7 @@ const UpdateAccountDistributor = async (product_name:any,local_program:any) => {
 		try{
 		let userFRAccount_l_p = await getTokenAccountBalance(account_ta_test_FixedRate.value[0].pubkey);
 		await delay(1000);
-		user_fixedrate_in_wallet=(Math.round(((Number(userFRAccount_l_p.amount)/fr_token_multiplier))*100)/100);
+		user_fixedrate_in_wallet=(((Number(userFRAccount_l_p.amount)/fr_token_multiplier)));
 		user_fixedrate_in_wallet_addy=account_ta_test_FixedRate.value[0].pubkey 
 
 
