@@ -42,6 +42,11 @@ function YearnFeesLineItem({children, label}: TYearnFeesLineItem): ReactElement 
 }
 
 function VaultDetailsAbout({currentVault, harvestData}: {currentVault: TYDaemonVault, harvestData: TGraphData[]}): ReactElement {
+	let chart_name='Cumulative Earnings'
+	let deposit_fee="0.3%"
+	if(currentVault.ftr_pool_id=="hehe3"){
+		chart_name="Overperformance vs benchmark portfolio"
+		deposit_fee="0%"}
 	const isMounted = useIsMounted()
 	;
 	const {token, apy, details} = currentVault;
@@ -90,21 +95,7 @@ function VaultDetailsAbout({currentVault, harvestData}: {currentVault: TYDaemonV
 					<b className={'text-neutral-900'}>{'Fees'}</b>
 					<p className={'mt-4 text-neutral-600'} dangerouslySetInnerHTML={{__html: getVaultFees()}} />
 				</div>
-				<div>
-					<b className={'text-neutral-900'}>{'APY'}</b>
-					<div className={'mt-4 grid grid-cols-1 gap-x-12 md:grid-cols-2'}>
-						<div className={'space-y-2'}>
-							<APYLineItem label={'Weekly APY'} value={apy.points.week_ago} />
-							<APYLineItem label={'Monthly APY'} value={apy.points.month_ago} />
-							
-						</div>
-						<div className={'mt-2 space-y-2 md:mt-0'}>
-							<APYLineItem label={'Gross APR'} value={apy.gross_apr} />
-							<APYLineItem label={'Net APY'} value={(apy.net_apy )} hasUpperLimit />
-							{apy.staking_rewards_apr > 0 && <APYLineItem label={'Reward APR'} value={apy.staking_rewards_apr} hasUpperLimit />}
-						</div>
-					</div>
-				</div>
+
 			</div>
 			<div className={'col-span-1 w-full space-y-8'}>
 				<div>
@@ -112,7 +103,7 @@ function VaultDetailsAbout({currentVault, harvestData}: {currentVault: TYDaemonV
 					<div className={'mt-4 flex flex-row space-x-6 md:space-x-8'}>
 						<YearnFeesLineItem label={'Deposit/Withdrawal fee'}>
 							<b className={'font-number text-xl text-neutral-900'}>
-								{"0.3%"}
+								{deposit_fee}
 							</b>
 						</YearnFeesLineItem>
 						<YearnFeesLineItem label={'Management fee'}>
@@ -128,7 +119,7 @@ function VaultDetailsAbout({currentVault, harvestData}: {currentVault: TYDaemonV
 					</div>
 				</div>
 				<div>
-					<b className={'text-neutral-900'}>{'Cumulative Earnings'}</b>
+					<b className={'text-neutral-900'}>{chart_name}</b>
 					<div className={'-mx-2 mt-4 flex flex-row border-b border-l border-neutral-300 md:mx-0'} style={{height: 160}}>
 						<Renderable shouldRender={isMounted()}>
 							<GraphForVaultEarnings currentVault={currentVault} harvestData={harvestData} height={160} />

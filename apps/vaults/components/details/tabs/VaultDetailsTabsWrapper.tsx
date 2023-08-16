@@ -175,10 +175,20 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 		}
 	}
 
+	console.log("CHART DATA LOADING")
+	console.log(currentVault)
 
-	const {data: ftr_data_chart} = useFetchFTR<any>({
-		endpoint: "https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=zeta_drift_strat_histo_30",
-	});
+	let urrl="https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=zeta_drift_strat_histo_30"
+	let columnnnn="2"
+	if(currentVault.ftr_pool_id=="hehe3"){
+		columnnnn="3"
+		urrl="https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=onchain_orca_histo_7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj"
+	}
+
+	let {data: ftr_data_chart} = useFetchFTR<any>({
+			endpoint: urrl,
+		});
+
 
 	const example_obj = {
 	  name: 'Bobby Hadz',
@@ -191,7 +201,7 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 		actual_data=[]
 		let all_names=Object.getOwnPropertyNames(ftr_data_chart)
 		for (let an=0;an<all_names.length;an++){
-			actual_data.push({name:formatDate(Number(ftr_data_chart[String(an) as any]["0"])*1000),value:Number(ftr_data_chart[String(an) as any]["2"])})
+			actual_data.push({name:formatDate(Number(ftr_data_chart[String(an) as any]["0"])*1000),value:Number(ftr_data_chart[String(an) as any][columnnnn])})
 		}
 	}
 

@@ -54,7 +54,7 @@ function VaultDetailsQuickActionsTo({contract_price}:{contract_price:any}): Reac
 					</div>
 				</Renderable>
 				<legend className={'font-number hidden text-xs text-neutral-600 md:inline'} suppressHydrationWarning>
-					{` Price : ${Number(contract_price)}`}
+					{contract_price}
 				</legend>
 			</div>
 

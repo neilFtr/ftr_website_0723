@@ -53,7 +53,7 @@ function VaultsListRow({currentVault}: {currentVault: TYDaemonVault}): ReactElem
 								)}
 							</b>
 							<small className={'text-xs text-neutral-900'}>
-								{"7D calc"}
+								{"90D calc"}
 							</small>
 							<small className={'text-xs text-neutral-900'}>
 								{currentVault.apy?.staking_rewards_apr ? `REWARD ${formatPercent((currentVault.apy?.staking_rewards_apr || 0) * 100, 2, 2, 500)}` : null}
