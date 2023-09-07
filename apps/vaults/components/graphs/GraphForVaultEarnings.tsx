@@ -15,7 +15,7 @@ export type TGraphForVaultEarningsProps = {
 }
 
 function GraphForVaultEarnings({currentVault, harvestData, height = 312, isCumulative = true}: TGraphForVaultEarningsProps): ReactElement {
-	console.log("Is main chart")
+
 	let useless=currentVault
 	const cumulativeData = useMemo((): {name: string; value: number}[] => {
 		let cumulativeValue = 0;

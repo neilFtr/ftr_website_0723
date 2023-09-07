@@ -107,7 +107,7 @@ const fr_token_multiplier=1000000;
 
 
 
-let current_pool_addy="DeKY5iwoYLgKzufMoGkU8ZccjiZKWb4KDdF6BX2XZv25";
+let current_pool_addy="3LMviePb5vhhhBUYE3wXMMtqCLhEaPdsBjJaTifbH9rj";
 let current_pool_name="perpFRv1";
 let product_reader_name="Fixed Rate";
 
@@ -174,19 +174,60 @@ function Index(): ReactElement | null {
 
   let funding_arb_apr=0
   let funding_arb_tvl=0
-  let funding_arb_cap=90
+  let funding_arb_cap=0
   let last_price=100
-  let cap_whirlpools=100000
-  let whirlpool_tvl=0
-  let whirlpool_apr=0
-  if (ftr_vaults_data){
 
-    funding_arb_apr=Number(ftr_vaults_data["FloatingRate"]["apr"])/100
-    funding_arb_tvl=ftr_vaults_data["FloatingRate"]["tvl"]
-    last_price=ftr_vaults_data["FloatingRate"]["last_price"]
+  let exo_funding_arb_apr=0
+  let exo_funding_arb_tvl=0
+  let exo_funding_arb_cap=0
+  let exo_last_price=100
+
+  let deribit_lping_apr=0
+  let deribit_lping_tvl=0
+  let deribit_lping_cap=0
+  let deribit_lping_last_price=100
+
+
+  let drift_lping_apr=0
+  let drift_lping_tvl=0
+  let drift_lping_cap=0
+  let drift_lping_last_price=100
+
+  let last_price_whrlpl=1
+  let cap_whirlpools=50000
+    let whirlpool_tvl=0
+    let whirlpool_apr=0
+  if (ftr_vaults_data){
+    console.log("DATAAAAA MAIN INDEX")
+    console.log(ftr_vaults_data)
+
     whirlpool_tvl=ftr_vaults_data["WhirlpoolStSOLUSDC"]["tvl"]
-    whirlpool_apr=ftr_vaults_data["WhirlpoolStSOLUSDC"]["apr"]
-    cap_whirlpools=ftr_vaults_data["WhirlpoolStSOLUSDC"]["tvl"]/cap_whirlpools
+      whirlpool_apr=Number(ftr_vaults_data["WhirlpoolStSOLUSDC"]["apr"])/100
+      cap_whirlpools=ftr_vaults_data["WhirlpoolStSOLUSDC"]["tvl"]/cap_whirlpools
+      last_price_whrlpl=100+Number(ftr_vaults_data["WhirlpoolStSOLUSDC"]["last_price"])
+
+      //funding_arb_apr=Number(ftr_vaults_data["VanillaFArb"]["apr"])/100
+    //funding_arb_tvl=ftr_vaults_data["VanillaFArb"]["tvl"]
+    last_price=100//ftr_vaults_data["VanillaFArb"]["last_price"]
+    //funding_arb_cap=Number(ftr_vaults_data["VanillaFArb"]["tvl"])/120
+
+
+    exo_funding_arb_apr=Number(ftr_vaults_data["ExosticFArb"]["apr"])/100
+    //exo_funding_arb_tvl=ftr_vaults_data["ExosticFArb"]["tvl"]
+    exo_last_price=100//ftr_vaults_data["ExosticFArb"]["last_price"]
+    //exo_funding_arb_cap=Number(ftr_vaults_data["ExosticFArb"]["tvl"])/500
+
+    deribit_lping_apr=Number(ftr_vaults_data["DriftMM"]["apr"])/100
+    deribit_lping_tvl=ftr_vaults_data["DriftMM"]["tvl"]
+    deribit_lping_cap=0
+    deribit_lping_last_price=100
+
+    drift_lping_apr=Number(ftr_vaults_data["DeribitMM"]["apr"])/100
+    drift_lping_tvl=ftr_vaults_data["DeribitMM"]["tvl"]
+    drift_lping_cap=0
+    drift_lping_last_price=100
+
+      
 
   }
 
@@ -195,7 +236,7 @@ function Index(): ReactElement | null {
     {"address":"0x3A51269e0707A3416044bad5066858A12198fcf7",
     "ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
     "ftr_type":"Distributor",
-    "ftr_pool_id":"DeKY5iwoYLgKzufMoGkU8ZccjiZKWb4KDdF6BX2XZv25",
+    "ftr_pool_id":"3LMviePb5vhhhBUYE3wXMMtqCLhEaPdsBjJaTifbH9rj",
     "type":"Automated",
     "symbol":"FundingArb",
     "display_symbol":"Onchain Funding Arbitrage",
@@ -221,21 +262,77 @@ function Index(): ReactElement | null {
     "strategies":[{"address":"0xEE341d18939562D6D8A34ea31Fe9BdA55bACb947","name":"StrategyCurveBoostedFactory-CLEVETH-f","displayName":"Curve Boost","description":"Supplies {{token}} to [Curve Finance](https://curve.fi) and stakes it in gauge to collect any available tokens and earn enhanced CRV rewards thanks to [Yearn's locked CRV boost](https://docs.yearn.finance/getting-started/guides/how-boost-works). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"15041529720494645680","totalLoss":"0","totalGain":"11587075871941007617","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"15041529720494645680","creditAvailable":"279776612486223422","debtOutstanding":"0","expectedReturn":"1549944828288110449","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1686264683,"activation":1675027391,"keepCRV":0,"debtRatio":10000,"debtLimit":0,"withdrawalQueuePosition":1,"doHealthCheck":true,"inQueue":true,"emergencyExit":false,"isActive":true},"risk":{"riskScore":2,"riskGroup":"Curve Boosted Factory","riskDetails":{"TVLImpact":1,"auditScore":5,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Yellow","currentTVL":"158570117.28708875","availableTVL":"-61346114.77387886","currentAmount":"463000629.32106197","availableAmount":"-2013.3633712140868"}}},{"address":"0xd73B085C715ADeE2551f5bAbc28200E79f739b0A","name":"StrategyConvexFactory-CLEVETH-f","displayName":"Convex Reinvest","description":"Supplies {{token}} to [Convex Finance](https://www.convexfinance.com/stake) boosted by Convex's veCRV to earn CRV and CVX (and any other available tokens). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"0","totalLoss":"0","totalGain":"0","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"0","creditAvailable":"10","debtOutstanding":"0","expectedReturn":"0","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Convex Finance","Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1675027391,"activation":1675027391,"keepCRV":0,"debtLimit":0,"withdrawalQueuePosition":0,"doHealthCheck":false,"inQueue":true,"emergencyExit":false,"isActive":false},"risk":{"riskScore":2,"riskGroup":"Convex Factory","riskDetails":{"TVLImpact":0,"auditScore":4,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Green","currentTVL":"0","availableTVL":"10","currentAmount":"0","availableAmount":"10"}}}],"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
        
   if (true){
-    vaults_ftrr["0x3a51269e0707A3416044BAD5066858a12198fcf6"]=
-      {"address":"0x3a51269e0707A3416044BAD5066858a12198fcf6",
+    vaults_ftrr["0x3a51269E0707A3416044bad5066858A12198fCf6"]=
+      {"address":"0x3a51269E0707A3416044bad5066858A12198fCf6",
       "ftr_sc_addy":"5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3",
       "ftr_type":"Whirlpool",
       "ftr_pool_id":"hehe3",
-      "type":"Automated","symbol":"stSOL automated LP","display_symbol":"stSOL automated LP","formated_symbol":"stSOLLP","name":"stSOL automated LP","display_name":"stSOL automated LP","formated_name":"stSOL automated LP","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png","version":"0.4.6","category":"Volatile",
-      "inception":0,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
-      "description":"This vault exploits a proprietary market making strategy, fully onchain, relying on Orca Whirlpools. Your account is segregated from the other users accounts. Your funds are available at any time. The smart contract is built so that the manager can only swap, create and close positions : the manager never has access to your funds. This vault is trustless, redemptions are instant. [RISKS] Future FTR Client for Orcar Whirlpools onchain program. Orca Whirlpools smart contract risk. Please make sure your understand the risks of providing concentrated liquidity, especially the impermanent loss risk. If you think the underlying coin is going up/down in straight line, this strategy is not adapted. Liquidity gap risk. Lido stSOL smart contract risk. Market risk : this vault has a structural spot long exposure and can never be short or leveraged. This strategy is not delta neutral. This strategy does not use a stop loss. We might rebalance to get the vault 100% in USDC (risk off) if we think the conditions justify it. [FEES] The vault charges 15% of the fees generated by the position. No deposit / withdraw fees. No fees on the performance of the underlying tokens. The performance presented on the chart is before fees. The overperformance is calculated by comparing the performance of the strategy to a portfolio of 50% token A and 50% token B",
-      "icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},
-      "tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":1000,"tvl_delegated":0,"tvl":whirlpool_tvl,"price":296.529102},
-      "apy":{"type":"crv","gross_apr":whirlpool_apr,"net_apy":0,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
-      "details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1500,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+      "type":"Automated","symbol":"stSOL automated LP","display_symbol":"stSOL automated LP","formated_symbol":"stSOLLP","name":"stSOL automated LP","display_name":"stSOL automated LP","formated_name":"stSOL automated LP","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
+      "version":String(last_price_whrlpl),
+      "category":"Volatile","inception":cap_whirlpools,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f","description":"This token represents a Curve v2 crypto pool. Holders earn fees from users trading in the pool, and can also deposit the LP to Curve's gauges to earn CRV emissions. This crypto pool contains CLEV and ETH. Please be aware that as crypto pools are composed of differently-priced assets, they are subject to impermanent loss.","icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},
+      "tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4243.2132083857305,"tvl_delegated":0,"tvl":whirlpool_tvl,"price":296.529102},
+      "apy":{"type":"crv","gross_apr":whirlpool_apr,"net_apy":whirlpool_apr,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+      "details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
       "strategies":[{"address":"0xEE341d18939562D6D8A34ea31Fe9BdA55bACb947","name":"StrategyCurveBoostedFactory-CLEVETH-f","displayName":"Curve Boost","description":"Supplies {{token}} to [Curve Finance](https://curve.fi) and stakes it in gauge to collect any available tokens and earn enhanced CRV rewards thanks to [Yearn's locked CRV boost](https://docs.yearn.finance/getting-started/guides/how-boost-works). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"15041529720494645680","totalLoss":"0","totalGain":"11587075871941007617","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"15041529720494645680","creditAvailable":"279776612486223422","debtOutstanding":"0","expectedReturn":"1549944828288110449","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1686264683,"activation":1675027391,"keepCRV":0,"debtRatio":10000,"debtLimit":0,"withdrawalQueuePosition":1,"doHealthCheck":true,"inQueue":true,"emergencyExit":false,"isActive":true},"risk":{"riskScore":2,"riskGroup":"Curve Boosted Factory","riskDetails":{"TVLImpact":1,"auditScore":5,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Yellow","currentTVL":"158570117.28708875","availableTVL":"-61346114.77387886","currentAmount":"463000629.32106197","availableAmount":"-2013.3633712140868"}}},{"address":"0xd73B085C715ADeE2551f5bAbc28200E79f739b0A","name":"StrategyConvexFactory-CLEVETH-f","displayName":"Convex Reinvest","description":"Supplies {{token}} to [Convex Finance](https://www.convexfinance.com/stake) boosted by Convex's veCRV to earn CRV and CVX (and any other available tokens). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"0","totalLoss":"0","totalGain":"0","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"0","creditAvailable":"0","debtOutstanding":"0","expectedReturn":"0","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Convex Finance","Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1675027391,"activation":1675027391,"keepCRV":0,"debtLimit":0,"withdrawalQueuePosition":0,"doHealthCheck":false,"inQueue":true,"emergencyExit":false,"isActive":false},"risk":{"riskScore":2,"riskGroup":"Convex Factory","riskDetails":{"TVLImpact":0,"auditScore":4,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Green","currentTVL":"0","availableTVL":"0","currentAmount":"0","availableAmount":"0"}}}],"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
       
 
+    vaults_ftrr["0x3a51269E0707A3416044bad5066858A12198fCf5"]=
+      {"address":"0x3a51269E0707A3416044bad5066858A12198fCf5",
+      "ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
+      "ftr_type":"Distributor",
+      "ftr_pool_id":"hehe4",
+      "type":"Automated","symbol":"Exotic Funding Arb","display_symbol":"Exotic Funding Arb","formated_symbol":"ExoFArb","name":"Exotic Funding Arb","display_name":"Exotic Funding Arb","formated_name":"Exotic Funding Arb","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
+      "version":String(exo_last_price),
+      "category":"ReadOnly",
+      "inception":exo_funding_arb_cap,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
+      "description": "This vault runs a floating rate funding arbitrage strategy. The performance of this vault is variable and there is no guarantee about the future yield of this vault being positive. The vault's funds can be deployed on Drift, Zeta, Mango Markets, Bybit, Opnx and HyperLiquid. The vault does not hold any market exposure (its a rigorous 0 delta vault). The performance presented is a 7 days estimation, net of fees. The redemption of this vault can take 24h to 48h [RISKS] The vaults holds different risks, including but not limited to : Funding rate risk, execution risk, Solana chain downtime, Drift-Mango-Zeta smart contract risk, Bybit, Opnx, Hyperliquid counterparty risk, oUSD depeg risk, liquidity gap risk. This vault uses a leverage from 2 to 4. The management of the funds of this vault is centralized : this is not a fully trustless vault. We strongly advise potential users to DYOR on Opnx. The oUSD depeg risk is slighly mitigated in this strategy but the risk of loss in capital is significantly higher than the vanilla funding rate product. This is not a risk free APR. [FEES] The vault charges a 0.3% deposit fee. This vault also locks 3% of the amounts invested (used to purchase and lock FTR). This FTR amount is unlocked when you redeem the product, which can lead into a positive / negative peformance depending on the FTR price change over the period. The vault implements a 10% performance fee (applied on your positive P&L).",
+      
+
+      "icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},
+      "tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4243.2132083857305,"tvl_delegated":0,"tvl":exo_funding_arb_tvl,"price":296.529102},
+      "apy":{"type":"crv","gross_apr":funding_arb_apr*0.9,"net_apy":exo_funding_arb_apr*0.9,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+      "details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+      "strategies":[{"address":"0xEE341d18939562D6D8A34ea31Fe9BdA55bACb947","name":"StrategyCurveBoostedFactory-CLEVETH-f","displayName":"Curve Boost","description":"Supplies {{token}} to [Curve Finance](https://curve.fi) and stakes it in gauge to collect any available tokens and earn enhanced CRV rewards thanks to [Yearn's locked CRV boost](https://docs.yearn.finance/getting-started/guides/how-boost-works). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"15041529720494645680","totalLoss":"0","totalGain":"11587075871941007617","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"15041529720494645680","creditAvailable":"279776612486223422","debtOutstanding":"0","expectedReturn":"1549944828288110449","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1686264683,"activation":1675027391,"keepCRV":0,"debtRatio":10000,"debtLimit":0,"withdrawalQueuePosition":1,"doHealthCheck":true,"inQueue":true,"emergencyExit":false,"isActive":true},"risk":{"riskScore":2,"riskGroup":"Curve Boosted Factory","riskDetails":{"TVLImpact":1,"auditScore":5,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Yellow","currentTVL":"158570117.28708875","availableTVL":"-61346114.77387886","currentAmount":"463000629.32106197","availableAmount":"-2013.3633712140868"}}},{"address":"0xd73B085C715ADeE2551f5bAbc28200E79f739b0A","name":"StrategyConvexFactory-CLEVETH-f","displayName":"Convex Reinvest","description":"Supplies {{token}} to [Convex Finance](https://www.convexfinance.com/stake) boosted by Convex's veCRV to earn CRV and CVX (and any other available tokens). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"0","totalLoss":"0","totalGain":"0","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"0","creditAvailable":"0","debtOutstanding":"0","expectedReturn":"0","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Convex Finance","Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1675027391,"activation":1675027391,"keepCRV":0,"debtLimit":0,"withdrawalQueuePosition":0,"doHealthCheck":false,"inQueue":true,"emergencyExit":false,"isActive":false},"risk":{"riskScore":2,"riskGroup":"Convex Factory","riskDetails":{"TVLImpact":0,"auditScore":4,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Green","currentTVL":"0","availableTVL":"0","currentAmount":"0","availableAmount":"0"}}}],"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
+      
+    let name4="Deribit LPing BTCUSD"
+    vaults_ftrr["0x3A51269E0707A3416044BaD5066858a12198FCf4"]=
+      {"address":"0x3A51269E0707A3416044BaD5066858a12198FCf4",
+      "ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
+      "ftr_type":"Distributor",
+      "ftr_pool_id":"hehe6",
+      "type":"Automated","symbol":name4,"display_symbol":name4,"formated_symbol":"ExoFArb","name":name4,"display_name":name4,"formated_name":name4,"icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
+      "version":String(deribit_lping_last_price),
+      "category":"ReadOnly",
+      "inception":exo_funding_arb_cap,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
+      "description": "This vault runs a leveraged grid trading strategy. This vault should perform well in ranging markets and mean reverting environment. It will underperform the underlying asset in trending conditions. The performance of this vault is variable and there is no guarantee about the future performance of this vault being positive. The vault's funds can only be deployed on Deribit, in the BTC/USDC market. The vault  will hold  market exposure for potentially multiple days (its not a rigorous 0 delta vault). On average, the exposure of the vault will be 0. The performance presented is a 30 days estimation, net of fees. The redemption of this vault can take 24h to 48h [RISKS] The vaults holds different risks, including but not limited to : Funding rate risk, slippage / liquidity gap risk, Solana chain downtime, Drift smart contract risk, . This vault uses a leverage from 3 to 7. The management of the funds of this vault is centralized : this is not a fully trustless vault. This is not a risk free APR. [FEES] The vault charges a 0.3% deposit fee. This vault also locks 3% of the amounts invested (used to purchase and lock FTR). This FTR amount is unlocked when you redeem the product, which can lead into a positive / negative peformance depending on the FTR price change over the period. The vault implements a 10% performance fee (applied on your positive P&L).",
+      
+
+      "icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},
+      "tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4243.2132083857305,"tvl_delegated":0,"tvl":deribit_lping_tvl,"price":296.529102},
+      "apy":{"type":"crv","gross_apr":deribit_lping_apr*0.9,"net_apy":deribit_lping_apr*0.9,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+      "details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+      "strategies":[{"address":"0xEE341d18939562D6D8A34ea31Fe9BdA55bACb947","name":"StrategyCurveBoostedFactory-CLEVETH-f","displayName":"Curve Boost","description":"Supplies {{token}} to [Curve Finance](https://curve.fi) and stakes it in gauge to collect any available tokens and earn enhanced CRV rewards thanks to [Yearn's locked CRV boost](https://docs.yearn.finance/getting-started/guides/how-boost-works). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"15041529720494645680","totalLoss":"0","totalGain":"11587075871941007617","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"15041529720494645680","creditAvailable":"279776612486223422","debtOutstanding":"0","expectedReturn":"1549944828288110449","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1686264683,"activation":1675027391,"keepCRV":0,"debtRatio":10000,"debtLimit":0,"withdrawalQueuePosition":1,"doHealthCheck":true,"inQueue":true,"emergencyExit":false,"isActive":true},"risk":{"riskScore":2,"riskGroup":"Curve Boosted Factory","riskDetails":{"TVLImpact":1,"auditScore":5,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Yellow","currentTVL":"158570117.28708875","availableTVL":"-61346114.77387886","currentAmount":"463000629.32106197","availableAmount":"-2013.3633712140868"}}},{"address":"0xd73B085C715ADeE2551f5bAbc28200E79f739b0A","name":"StrategyConvexFactory-CLEVETH-f","displayName":"Convex Reinvest","description":"Supplies {{token}} to [Convex Finance](https://www.convexfinance.com/stake) boosted by Convex's veCRV to earn CRV and CVX (and any other available tokens). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"0","totalLoss":"0","totalGain":"0","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"0","creditAvailable":"0","debtOutstanding":"0","expectedReturn":"0","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Convex Finance","Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1675027391,"activation":1675027391,"keepCRV":0,"debtLimit":0,"withdrawalQueuePosition":0,"doHealthCheck":false,"inQueue":true,"emergencyExit":false,"isActive":false},"risk":{"riskScore":2,"riskGroup":"Convex Factory","riskDetails":{"TVLImpact":0,"auditScore":4,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Green","currentTVL":"0","availableTVL":"0","currentAmount":"0","availableAmount":"0"}}}],"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
+      
+    name4="Drift LPing SOLUSD"
+    vaults_ftrr["0x3A51269e0707A3416044BaD5066858A12198FcF3"]=
+      {"address":"0x3A51269e0707A3416044BaD5066858A12198FcF3",
+      "ftr_sc_addy":"5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3",
+      "ftr_type":"Distributor",
+      "ftr_pool_id":"hehe5",
+      "type":"Automated","symbol":name4,"display_symbol":name4,"formated_symbol":"ExoFArb","name":name4,"display_name":name4,"formated_name":name4,"icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
+      "version":String(drift_lping_last_price),
+      "category":"ReadOnly",
+      "inception":exo_funding_arb_cap,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
+      "description": "This vault runs a leveraged grid trading strategy. This vault should perform well in ranging markets and mean reverting environment. It will underperform the underlying asset in trending conditions. The performance of this vault is variable and there is no guarantee about the future performance of this vault being positive. The vault's funds can only be deployed on Drift, in the SOL/USDC market. The vault  will hold  market exposure for potentially multiple days (its not a rigorous 0 delta vault). On average, the exposure of the vault will be 0. The performance presented is a 30 days estimation, net of fees. The redemption of this vault can take 24h to 48h [RISKS] The vaults holds different risks, including but not limited to : Funding rate risk, slippage / liquidity gap risk, Solana chain downtime, Drift smart contract risk, . This vault uses a leverage from 3 to 7. The management of the funds of this vault is centralized : this is not a fully trustless vault. This is not a risk free APR. [FEES] The vault charges a 0.3% deposit fee. This vault also locks 3% of the amounts invested (used to purchase and lock FTR). This FTR amount is unlocked when you redeem the product, which can lead into a positive / negative peformance depending on the FTR price change over the period. The vault implements a 10% performance fee (applied on your positive P&L).",
+      
+
+      "icon":"https://assets.smold.app/api/token/1/0x6C280dB098dB673d30d5B34eC04B6387185D3620/logo-128.png","decimals":18},
+      "tvl":{"total_assets":"15321306332980869102","total_delegated_assets":"0","tvl_deposited":4243.2132083857305,"tvl_delegated":0,"tvl":drift_lping_tvl,"price":296.529102},
+      "apy":{"type":"crv","gross_apr":funding_arb_apr*0.9,"net_apy":drift_lping_apr*0.9,"staking_rewards_apr":0,"fees":{"performance":0.1,"withdrawal":0,"management":0,"keep_crv":0,"cvx_keep_crv":0},"points":{"week_ago":0,"month_ago":0,"inception":0},"composite":{"boost":2.5,"pool_apy":0.0001933754333323101,"boosted_apr":0.7148185920019143,"base_apr":0.2859274368007657,"cvx_apr":0.4574356177111497,"rewards_apr":0}},
+      "details":{"management":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","governance":"0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52","guardian":"0x2C01B4AD51a67E2d8F02208F54dF9aC4c0B778B6","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","depositLimit":"10000000000000000000000000000000","availableDepositLimit":"9999999999984678693667019130898","comment":"Concentrated liquidity market making","apyTypeOverride":"","apyOverride":0,"order":286,"performanceFee":1000,"managementFee":0,"depositsDisabled":false,"withdrawalsDisabled":false,"allowZapIn":true,"allowZapOut":true,"retired":false,"hideAlways":false},
+      "strategies":[{"address":"0xEE341d18939562D6D8A34ea31Fe9BdA55bACb947","name":"StrategyCurveBoostedFactory-CLEVETH-f","displayName":"Curve Boost","description":"Supplies {{token}} to [Curve Finance](https://curve.fi) and stakes it in gauge to collect any available tokens and earn enhanced CRV rewards thanks to [Yearn's locked CRV boost](https://docs.yearn.finance/getting-started/guides/how-boost-works). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"15041529720494645680","totalLoss":"0","totalGain":"11587075871941007617","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"15041529720494645680","creditAvailable":"279776612486223422","debtOutstanding":"0","expectedReturn":"1549944828288110449","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1686264683,"activation":1675027391,"keepCRV":0,"debtRatio":10000,"debtLimit":0,"withdrawalQueuePosition":1,"doHealthCheck":true,"inQueue":true,"emergencyExit":false,"isActive":true},"risk":{"riskScore":2,"riskGroup":"Curve Boosted Factory","riskDetails":{"TVLImpact":1,"auditScore":5,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Yellow","currentTVL":"158570117.28708875","availableTVL":"-61346114.77387886","currentAmount":"463000629.32106197","availableAmount":"-2013.3633712140868"}}},{"address":"0xd73B085C715ADeE2551f5bAbc28200E79f739b0A","name":"StrategyConvexFactory-CLEVETH-f","displayName":"Convex Reinvest","description":"Supplies {{token}} to [Convex Finance](https://www.convexfinance.com/stake) boosted by Convex's veCRV to earn CRV and CVX (and any other available tokens). Earned tokens are harvested, sold for more {{token}} which is deposited back into the strategy.","details":{"keeper":"0x0D26E894C2371AB6D20d99A65E991775e3b5CAd7","strategist":"0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7","rewards":"0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde","healthCheck":"0xDDCea799fF1699e98EDF118e0629A974Df7DF012","totalDebt":"0","totalLoss":"0","totalGain":"0","minDebtPerHarvest":"0","maxDebtPerHarvest":"115792089237316195423570985008687907853269984665640564039457584007913129639935","estimatedTotalAssets":"0","creditAvailable":"0","debtOutstanding":"0","expectedReturn":"0","delegatedAssets":"0","delegatedValue":"0","version":"0.4.5","protocols":["Convex Finance","Curve Finance"],"apr":0,"performanceFee":0,"lastReport":1675027391,"activation":1675027391,"keepCRV":0,"debtLimit":0,"withdrawalQueuePosition":0,"doHealthCheck":false,"inQueue":true,"emergencyExit":false,"isActive":false},"risk":{"riskScore":2,"riskGroup":"Convex Factory","riskDetails":{"TVLImpact":0,"auditScore":4,"codeReviewScore":2,"complexityScore":2,"longevityImpact":2,"protocolSafetyScore":2,"teamKnowledgeScore":1,"testingScore":3},"allocation":{"status":"Green","currentTVL":"0","availableTVL":"0","currentAmount":"0","availableAmount":"0"}}}],"migration":{"available":false,"address":"0x3a51269E0707A3416044bad5066858A12198fCf5","contract":"0x0000000000000000000000000000000000000000"},"staking":{"available":false,"address":"0x0000000000000000000000000000000000000000","tvl":0,"risk":0}}
+      
+      
 
       }
 
@@ -305,7 +402,9 @@ function Index(): ReactElement | null {
 
 const MainButtonIsClicked = async (e : any,e2 : any) => {
 
-  if (true){
+  if (vault["category"]=="ReadOnly"){
+    toastit("Status:  This contract is not investable yet")
+  }else{
       if (vault["ftr_sc_addy"]=="5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3"){
         if(button_message=="Create Account")
         {
@@ -742,7 +841,7 @@ const UpdateAccount = async (product_name:any,local_program:any) => {
 						}//End of loop
             if (nb_positions<1 || aggregated_liquidity==0){
                         set_additional_message_whirlpools("Not in a position.")}
-            else{ set_additional_message_whirlpools("Currently in a position : ["+price_current_position_start+","+price_current_position_end+"]")}
+            else{ set_additional_message_whirlpools("Current bandz : ["+String(Math.round(price_current_position_start*100)/100)+","+String(Math.round(price_current_position_end*100)/100)+"]")}
 						set_wp_lp_underlying_position(current_position_token1+t2n)
 						set_wp_lp_usdc_position(current_position_token2+t1n)
 
@@ -1526,13 +1625,11 @@ console.log("Checking available usdc-----------------------------3")
 			console.log(account.poolFixedRate)
 			let av_fr_amt=1000
 			await delay(1000);
-			console.log("FIST CHECK")
-			console.log(av_fr_amt )
+
 			let av_usdc_amt=1000
 			await delay(1000);
 			set_maturity_price(account.priceContract/1000000);
-			console.log("Maturity date NEW")
-			console.log(account.maturityTime)
+
 
 
 
@@ -1577,6 +1674,9 @@ console.log("Checking available usdc-----------------------------3")
 			console.log("Owner FixedR")
 			const account_ta_test_FixedRate = await solana_t.getTokenAccountsByOwner(provider.wallet.publicKey, {
 			mint: mintPublicKey_fixedRate});
+      console.log("mintPublicKey_fixedRate")
+      console.log(mintPublicKey_fixedRate.toString())
+      console.log(account_ta_test_FixedRate)
 			await delay(1000);
 			let user_ftr_in_wallet=0
 			let user_usdc_in_wallet=0
@@ -1659,6 +1759,7 @@ console.log("Checking available usdc-----------------------------3")
 		try{
 		let userFRAccount_l_p = await getTokenAccountBalance(account_ta_test_FixedRate.value[0].pubkey);
 		await delay(1000);
+    console.log(Number(userFRAccount_l_p.amount))
 		user_fixedrate_in_wallet=(((Number(userFRAccount_l_p.amount)/fr_token_multiplier)));
 		user_fixedrate_in_wallet_addy=account_ta_test_FixedRate.value[0].pubkey 
 
@@ -1714,8 +1815,8 @@ const InvestFixedRateDistributor = async () => {
  
 
 
-      let mintPublicKey_ftr = new web3.PublicKey("HEhMLvpSdPviukafKwVN8BnBUTamirptsQ6Wxo5Cyv8s"); 
-      let relevant_pool_pk=new web3.PublicKey("2Dts6QkFFxcPeiKECfBxfjrqEJtRy7sSK8G2mKs8Xa3P")
+      let mintPublicKey_ftr = new web3.PublicKey("FTRXzsBabF1eYux54KbZxAN27W7o5AquN21wNLjKzJpr"); 
+      let relevant_pool_pk=new web3.PublicKey("77fVf4PQueEjj6NCGkBwpMvPWcZ3V7ipBJhJjNF2svZ")
       let mintPublicKey_usdc = new web3.PublicKey(account.collateralMint.toString());  
       let mintPublicKey_fixedRate = new web3.PublicKey(account.contractMint.toString());  
       const solana_t = new web33.Connection("https://rpc.helius.xyz/?api-key=f887483d-4017-4d59-a456-3a3638be952d");
@@ -1925,8 +2026,8 @@ const RequestWithdrawalDistributor = async () => {
  
 
 
-      let mintPublicKey_ftr = new web3.PublicKey("HEhMLvpSdPviukafKwVN8BnBUTamirptsQ6Wxo5Cyv8s"); 
-      let relevant_pool_pk=new web3.PublicKey("2Dts6QkFFxcPeiKECfBxfjrqEJtRy7sSK8G2mKs8Xa3P")
+      let mintPublicKey_ftr = new web3.PublicKey("FTRXzsBabF1eYux54KbZxAN27W7o5AquN21wNLjKzJpr"); 
+      let relevant_pool_pk=new web3.PublicKey("77fVf4PQueEjj6NCGkBwpMvPWcZ3V7ipBJhJjNF2svZ")
       let mintPublicKey_usdc = new web3.PublicKey(account.collateralMint.toString());  
       let mintPublicKey_fixedRate = new web3.PublicKey(account.contractMint.toString());  
       const solana_t = new web33.Connection("https://rpc.helius.xyz/?api-key=f887483d-4017-4d59-a456-3a3638be952d");
@@ -2013,8 +2114,8 @@ const RequestWithdrawalDistributor = async () => {
  
 
 
-      let mintPublicKey_ftr = new web3.PublicKey("HEhMLvpSdPviukafKwVN8BnBUTamirptsQ6Wxo5Cyv8s"); 
-      let relevant_pool_pk=new web3.PublicKey("2Dts6QkFFxcPeiKECfBxfjrqEJtRy7sSK8G2mKs8Xa3P")
+      let mintPublicKey_ftr = new web3.PublicKey("FTRXzsBabF1eYux54KbZxAN27W7o5AquN21wNLjKzJpr"); 
+      let relevant_pool_pk=new web3.PublicKey("77fVf4PQueEjj6NCGkBwpMvPWcZ3V7ipBJhJjNF2svZ")
       let mintPublicKey_usdc = new web3.PublicKey(account.collateralMint.toString());  
       let mintPublicKey_fixedRate = new web3.PublicKey(account.contractMint.toString());  
       const solana_t = new web33.Connection("https://rpc.helius.xyz/?api-key=f887483d-4017-4d59-a456-3a3638be952d");
@@ -2193,7 +2294,7 @@ toastit("Status : Started setting up onchain accounts")
 
 //----------------------------------- CREATING TOKEN ACCOUNT FOR PRODUCT -----------------------------
       
-      let mintPublicKey_ftr = new web3.PublicKey("HEhMLvpSdPviukafKwVN8BnBUTamirptsQ6Wxo5Cyv8s"); 
+      let mintPublicKey_ftr = new web3.PublicKey("FTRXzsBabF1eYux54KbZxAN27W7o5AquN21wNLjKzJpr"); 
       let mintPublicKey_usdc = new web3.PublicKey(account.collateralMint.toString());  
       let mintPublicKey_fixedRate = new web3.PublicKey(account.contractMint.toString());  
 
