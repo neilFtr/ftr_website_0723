@@ -195,7 +195,7 @@ function Index(): ReactElement {
       "ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
       "ftr_type":"Distributor",
       "ftr_pool_id":"hehe4",
-      "type":"Automated","symbol":"Exotic Funding Arb","display_symbol":"Exotic Funding Arb","formated_symbol":"ExoFArb","name":"Exotic Funding Arb","display_name":"Exotic Funding Arb","formated_name":"Exotic Funding Arb","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
+      "type":"Automated","symbol":"Exotic Funding Arb Opnx","display_symbol":"Exotic Funding Arb","formated_symbol":"ExoFArb","name":"Exotic Funding Arb","display_name":"Exotic Funding Arb","formated_name":"Exotic Funding Arb","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
       "version":String(exo_last_price),
       "category":"Velodrome",
       "inception":exo_funding_arb_cap,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
