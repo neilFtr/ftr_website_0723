@@ -200,6 +200,18 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 	urrl="https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=market_maker_parasite_bigpic_30"
 }
 
+
+	if(currentVault.ftr_pool_id=="hehe7"){
+	columnnnn="2"
+	urrl="https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=directional_30"
+}
+
+
+	if(currentVault.ftr_pool_id=="hehe8"){
+	columnnnn="2"
+	urrl="https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=semi_fr_30"
+}
+
 	console.log("URL DATA ",urrl)
 	let {data: ftr_data_chart} = useFetchFTR<any>({
 			endpoint: urrl,

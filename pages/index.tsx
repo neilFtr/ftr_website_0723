@@ -25,18 +25,12 @@ const apps = [
 
 	},
 
-	// {
-	// 	href: '/ybal',
-	// 	title: 'yBal',
-	// 	description: 'get the best Balancer yields in DeFi.',
-	// 	icon: <Image
-	// 		alt={'yBal'}
-	// 		width={100}
-	// 		height={100}
-	// 		src={`${process.env.BASE_YEARN_ASSETS_URI}/1/${YBAL_TOKEN_ADDRESS}/logo-128.png`}
-	// 		loading={'eager'}
-	// 		priority />
-	// },
+	{
+		href: 'https://futureftr.streamlit.app/',
+		title: 'Market Data',
+		description: 'Get unique insights on the market',
+
+	},
 
 
 ];
