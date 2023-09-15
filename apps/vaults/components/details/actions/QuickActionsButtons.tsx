@@ -32,6 +32,10 @@ function VaultDetailsQuickActionsButtons({button_message,button_is_clicked,is_bu
 		if(button_message=="Create Account"){
 			msgg="Create Account"
 		}
+
+		if(button_message=="Opening soon"){
+			msgg="Opening soon"
+		}
 		return (
 			<Button
 				className={'w-full'}

@@ -96,8 +96,12 @@ const vaults_FTR=[
 		]
 
 const underlying_tokens=[{mint: new PublicKey("7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj"), decimals: 9},{mint: new PublicKey("RLBxxFkseAZ4RgJH3Sqn8jXxhmGoz9jWxDNJMh8pL7a"), decimals: 2},{mint: new PublicKey("3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh"), decimals: 8}]
-const relevant_whirpools=["AXtdSZ2mpagmtM5aipN5kV9CyGBA8dxhSBnqMRp7UpdN","6bskSanDywHt17rRXRbnx1zoErCeCpst5P4544s6cZka","55BrDTCLWayM16GwrMEQU57o4PTm6ceF9wavSdNZcEiy"]
-const products_website_names=["stSOL/USDC Whirlpool","RLB/USDC Whirlpool","wBTC/USDC Whirlpool"]
+const relevant_whirpools=["AXtdSZ2mpagmtM5aipN5kV9CyGBA8dxhSBnqMRp7UpdN",
+                          "6bskSanDywHt17rRXRbnx1zoErCeCpst5P4544s6cZka",
+                          "55BrDTCLWayM16GwrMEQU57o4PTm6ceF9wavSdNZcEiy"]
+const products_website_names=["stSOL/USDC Whirlpool",
+                              "RLB/USDC Whirlpool",
+                              "wBTC/USDC Whirlpool"]
 
 
 
@@ -162,9 +166,10 @@ function Index(): ReactElement | null {
 
 
   const [fully_loaded, set_fully_loaded] = useState(false);
-  	const [user_whirpool_mint_found, set_user_whirpool_mint_found] = useState("0");
+    const [user_whirpool_mint_found, set_user_whirpool_mint_found] = useState("0");
   	const [additionnal_info_product, set_additionnal_info_product] = useState("0");
   	
+
 
 
 
@@ -224,9 +229,9 @@ function Index(): ReactElement | null {
 
 
     exo_funding_arb_apr=Number(ftr_vaults_data["ExosticFArb"]["apr"])/100
-    //exo_funding_arb_tvl=ftr_vaults_data["ExosticFArb"]["tvl"]
-    exo_last_price=100//ftr_vaults_data["ExosticFArb"]["last_price"]
-    //exo_funding_arb_cap=Number(ftr_vaults_data["ExosticFArb"]["tvl"])/500
+    exo_funding_arb_tvl=ftr_vaults_data["ExosticFArb"]["tvl"]
+    exo_last_price=ftr_vaults_data["ExosticFArb"]["last_price"]
+    exo_funding_arb_cap=Number(ftr_vaults_data["ExosticFArb"]["tvl"])/500
 
     deribit_lping_apr=Number(ftr_vaults_data["DriftMM"]["apr"])/100
     deribit_lping_tvl=ftr_vaults_data["DriftMM"]["tvl"]
@@ -302,10 +307,10 @@ function Index(): ReactElement | null {
       {"address":"0x3a51269E0707A3416044bad5066858A12198fCf5",
       "ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
       "ftr_type":"Distributor",
-      "ftr_pool_id":"hehe4",
+      "ftr_pool_id":"E9EvbGFjrxDP6FQeXEJ88c9jNsJZkbdt5AhEZJaaYLGt",
       "type":"Automated","symbol":"Exotic Funding Arb Opnx","display_symbol":"Exotic Funding Arb","formated_symbol":"ExoFArb","name":"Exotic Funding Arb","display_name":"Exotic Funding Arb","formated_name":"Exotic Funding Arb","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
       "version":String(exo_last_price),
-      "category":"Velodrome",
+      "category":"Volatile",
       "inception":exo_funding_arb_cap,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
       "description": "This vault runs a floating rate funding arbitrage strategy. The performance of this vault is variable and there is no guarantee about the future yield of this vault being positive. The vault's funds can be deployed on Drift, Zeta, Mango Markets, Bybit, Opnx and HyperLiquid. The vault does not hold any market exposure (its a rigorous 0 delta vault). The performance presented is a 7 days estimation, net of fees. The redemption of this vault can take 24h to 48h [RISKS] The vaults holds different risks, including but not limited to : Funding rate risk, execution risk, Solana chain downtime, Drift-Mango-Zeta smart contract risk, Bybit, Opnx, Hyperliquid counterparty risk, oUSD depeg risk, liquidity gap risk. This vault uses a leverage from 2 to 4. The management of the funds of this vault is centralized : this is not a fully trustless vault. We strongly advise potential users to DYOR on Opnx. The oUSD depeg risk is slighly mitigated in this strategy but the risk of loss in capital is significantly higher than the vanilla funding rate product. This is not a risk free APR. [FEES] The vault charges a 0.3% deposit fee. This vault also locks 3% of the amounts invested (used to purchase and lock FTR). This FTR amount is unlocked when you redeem the product, which can lead into a positive / negative peformance depending on the FTR price change over the period. The vault implements a 10% performance fee (applied on your positive P&L).",
       
@@ -399,6 +404,7 @@ function Index(): ReactElement | null {
 
       }
 
+
 	let product_name="stSOL/USDC Whirlpool"
 
 	const {toast, toastMaster} = yToast();
@@ -408,8 +414,14 @@ function Index(): ReactElement | null {
 
 	const [currentVault, set_currentVault] = useState<TYDaemonVault | undefined>(vaults_ftrr[toAddress(router.query.address as string)]);
 	let isLoadingVault=false
+  console.log("Address URL : ")
+  console.log(router.query.address)
 	let vault=vaults_ftrr[router.query.address as string]
-
+  let basee="3LMviePb5vhhhBUYE3wXMMtqCLhEaPdsBjJaTifbH9rj"
+  if (vault){
+      basee=vault["ftr_pool_id"]
+  }
+  const [ftr_vault_address, set_ftr_vault_address] = useState(basee);
 	let strname=router.query.address as string
 
 
@@ -689,7 +701,9 @@ const UpdateAccount = async (product_name:any,local_program:any) => {
 	         	}else{
 	         		set_button_message("Is Oke")
 
-	         		
+	        if (vault["category"]=="Velodrome"){
+            set_button_message("Vault opening soon")
+          }
 					const user_account:any = await prgrm.account.userAccount.fetch(userAccount);
 					await delay(500)
 				
@@ -1622,13 +1636,14 @@ const UpdateAccountDistributor = async (product_name:any,local_program:any) => {
 
 
 
-		const pk_poolAccount=new anchor.web3.PublicKey(current_pool_addy);
+		const pk_poolAccount=new anchor.web3.PublicKey(ftr_vault_address);
 		const account:any = await prgrm.account.contractState.fetch(pk_poolAccount);
 		await delay(1000);
 		let authority=provider.wallet.publicKey;
 		var enc = new TextEncoder()
-		let contractState=new PublicKey(current_pool_addy)
-
+		let contractState=new PublicKey(ftr_vault_address)
+    console.log("Contract State Address : ")
+    console.log(ftr_vault_address)
 
 		const [user, bump_user] =
 		web3.PublicKey.findProgramAddressSync(
@@ -1644,12 +1659,18 @@ const UpdateAccountDistributor = async (product_name:any,local_program:any) => {
 		if (user_account_test==null){
 			console.log("User accounts isnt ready")
 			set_button_message("Create Account")
+              if (vault["category"]=="Velodrome"){
+            set_button_message("Opening soon")
+        }
 
 		}else{
 			console.log("User accounts IS ready")
 			set_button_message("Is oke")
 
 
+        if (vault["category"]=="Velodrome"){
+            set_button_message("Vault opening soon")
+        }
 			try{
         console.log("Checking available usdc-----------------------------")
 				const user_account_real:any = await prgrm.account.userState.fetch(user);
@@ -1870,7 +1891,7 @@ const InvestFixedRateDistributor = async () => {
       let authority=provider.wallet.publicKey;
 
 
-    const pk_poolAccount=new anchor.web3.PublicKey(current_pool_addy);
+    const pk_poolAccount=new anchor.web3.PublicKey(ftr_vault_address);
     const account:any = await program.account.contractState.fetch(pk_poolAccount);
     console.log("-------------------------")
     console.log("INVESTED FR");
@@ -1973,6 +1994,9 @@ const InvestFixedRateDistributor = async () => {
         ],
         program.programId
       );
+
+      console.log("vaultFtrAta")
+      console.log(vaultFtrAta.toString())
 
 
   let ORCA_WHIRLPOOL_PROGRAM_ID_DEVNET=new PublicKey("whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc")
@@ -2081,7 +2105,7 @@ const RequestWithdrawalDistributor = async () => {
     let authority=provider.wallet.publicKey;
 
 
-    const pk_poolAccount=new anchor.web3.PublicKey(current_pool_addy);
+    const pk_poolAccount=new anchor.web3.PublicKey(ftr_vault_address);
     const account:any = await program.account.contractState.fetch(pk_poolAccount);
     console.log("-------------------------")
     console.log("INVESTED FR");
@@ -2169,7 +2193,7 @@ const RequestWithdrawalDistributor = async () => {
       let authority=provider.wallet.publicKey;
 
 
-    const pk_poolAccount=new anchor.web3.PublicKey(current_pool_addy);
+    const pk_poolAccount=new anchor.web3.PublicKey(ftr_vault_address);
     const account:any = await program.account.contractState.fetch(pk_poolAccount);
     console.log("-------------------------")
 
@@ -2350,7 +2374,7 @@ toastit("Status : Started setting up onchain accounts")
     if (program!=undefined){
      const prgrm:anchor.Program=program;
      const { provider } = prgrm;
-     const pk_poolAccount=new anchor.web3.PublicKey(current_pool_addy);
+     const pk_poolAccount=new anchor.web3.PublicKey(ftr_vault_address);
      const account:any = await program.account.contractState.fetch(pk_poolAccount);
     
 
@@ -2517,7 +2541,7 @@ toastit("Status : Started setting up onchain accounts")
 
 
 
-
+  toastit("Status : Transaction confirmed")
   await delay(3000);
   UpdateAccountDistributor("stSOL/USDC Whirlpool",program)
 

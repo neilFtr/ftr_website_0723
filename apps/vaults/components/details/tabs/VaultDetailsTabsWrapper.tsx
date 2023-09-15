@@ -175,8 +175,7 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 		}
 	}
 
-	console.log("CHART DATA LOADING")
-	console.log(currentVault)
+
 
 	let urrl="https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=zeta_drift_strat_histo_30"
 	let columnnnn="2"
@@ -185,7 +184,7 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 		urrl="https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=onchain_orca_histo_7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj"
 	}
 
-	if(currentVault.ftr_pool_id=="hehe4"){
+	if(currentVault.ftr_pool_id=="E9EvbGFjrxDP6FQeXEJ88c9jNsJZkbdt5AhEZJaaYLGt"){
 		columnnnn="2"
 		urrl="https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=hyperliquid_opndx_funding_strat_30"
 	}
@@ -249,8 +248,7 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 
 
 
-		console.log("DATA SHAPE")
-		console.log(rnew)
+
 		return (actual_data
 		);
 	}, [currentVault.decimals, yDaemonHarvestsData]);

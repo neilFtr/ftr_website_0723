@@ -26,8 +26,7 @@ function VaultsListRow({currentVault}: {currentVault: TYDaemonVault}): ReactElem
 	const {stakingRewardsByVault, positionsMap} = useStakingRewards();
 	const stakedBalance = toNormalizedValue(toBigInt(positionsMap[toAddress(stakingRewardsByVault[currentVault.address])]?.stake), currentVault.decimals);
 	const depositedAndStaked = Number(currentVault.version);
-	console.log("currentVault.version")
-	console.log(currentVault.version)
+
 	const availableToDeposit = currentVault.inception;
 	return (
 		<Link key={`${currentVault.address}`} href={`/vaults/${safeChainID}/${toAddress(currentVault.address)}`}>

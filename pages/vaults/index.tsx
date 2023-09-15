@@ -139,9 +139,9 @@ function Index(): ReactElement {
 
 
     exo_funding_arb_apr=Number(ftr_vaults_data["ExosticFArb"]["apr"])/100
-    //exo_funding_arb_tvl=ftr_vaults_data["ExosticFArb"]["tvl"]
-    exo_last_price=100//ftr_vaults_data["ExosticFArb"]["last_price"]
-    //exo_funding_arb_cap=Number(ftr_vaults_data["ExosticFArb"]["tvl"])/500
+    exo_funding_arb_tvl=ftr_vaults_data["ExosticFArb"]["tvl"]
+    exo_last_price=ftr_vaults_data["ExosticFArb"]["last_price"]
+    exo_funding_arb_cap=Number(ftr_vaults_data["ExosticFArb"]["tvl"])/500
 
     deribit_lping_apr=Number(ftr_vaults_data["DriftMM"]["apr"])/100
     deribit_lping_tvl=ftr_vaults_data["DriftMM"]["tvl"]
@@ -167,6 +167,7 @@ function Index(): ReactElement {
       
 
   }
+
 
   vaults_ftrr["0x3A51269e0707A3416044bad5066858A12198fcf7"]=
     {"address":"0x3A51269e0707A3416044bad5066858A12198fcf7",
@@ -216,10 +217,10 @@ function Index(): ReactElement {
       {"address":"0x3a51269E0707A3416044bad5066858A12198fCf5",
       "ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
       "ftr_type":"Distributor",
-      "ftr_pool_id":"hehe4",
+      "ftr_pool_id":"E9EvbGFjrxDP6FQeXEJ88c9jNsJZkbdt5AhEZJaaYLGt",
       "type":"Automated","symbol":"Exotic Funding Arb Opnx","display_symbol":"Exotic Funding Arb","formated_symbol":"ExoFArb","name":"Exotic Funding Arb","display_name":"Exotic Funding Arb","formated_name":"Exotic Funding Arb","icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
       "version":String(exo_last_price),
-      "category":"Velodrome",
+      "category":"Volatile",
       "inception":exo_funding_arb_cap,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
       "description": "This vault runs a floating rate funding arbitrage strategy. The performance of this vault is variable and there is no guarantee about the future yield of this vault being positive. The vault's funds can be deployed on Drift, Zeta, Mango Markets, Bybit, Opnx and HyperLiquid. The vault does not hold any market exposure (its a rigorous 0 delta vault). The performance presented is a 7 days estimation, net of fees. The redemption of this vault can take 24h to 48h [RISKS] The vaults holds different risks, including but not limited to : Funding rate risk, execution risk, Solana chain downtime, Drift-Mango-Zeta smart contract risk, Bybit, Opnx, Hyperliquid counterparty risk, oUSD depeg risk, liquidity gap risk. This vault uses a leverage from 2 to 4. The management of the funds of this vault is centralized : this is not a fully trustless vault. We strongly advise potential users to DYOR on Opnx. The oUSD depeg risk is slighly mitigated in this strategy but the risk of loss in capital is significantly higher than the vanilla funding rate product. This is not a risk free APR. [FEES] The vault charges a 0.3% deposit fee. This vault also locks 3% of the amounts invested (used to purchase and lock FTR). This FTR amount is unlocked when you redeem the product, which can lead into a positive / negative peformance depending on the FTR price change over the period. The vault implements a 10% performance fee (applied on your positive P&L).",
       
@@ -239,7 +240,7 @@ function Index(): ReactElement {
       "type":"Automated","symbol":name4,"display_symbol":name4,"formated_symbol":"ExoFArb","name":name4,"display_name":name4,"formated_name":name4,"icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
       "version":String(deribit_lping_last_price),
       "category":"Velodrome",
-      "inception":exo_funding_arb_cap,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
+      "inception":deribit_lping_cap,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
       "description": "This vault runs a leveraged grid trading strategy. This vault should perform well in ranging markets and mean reverting environment. It will underperform the underlying asset in trending conditions. The performance of this vault is variable and there is no guarantee about the future performance of this vault being positive. The vault's funds can only be deployed on Deribit, in the BTC/USDC market. The vault  will hold  market exposure for potentially multiple days (its not a rigorous 0 delta vault). On average, the exposure of the vault will be 0. The performance presented is a 30 days estimation, net of fees. The redemption of this vault can take 24h to 48h [RISKS] The vaults holds different risks, including but not limited to : Funding rate risk, slippage / liquidity gap risk, Solana chain downtime, Drift smart contract risk, . This vault uses a leverage from 3 to 7. The management of the funds of this vault is centralized : this is not a fully trustless vault. This is not a risk free APR. [FEES] The vault charges a 0.3% deposit fee. This vault also locks 3% of the amounts invested (used to purchase and lock FTR). This FTR amount is unlocked when you redeem the product, which can lead into a positive / negative peformance depending on the FTR price change over the period. The vault implements a 10% performance fee (applied on your positive P&L).",
       
 
@@ -312,6 +313,7 @@ function Index(): ReactElement {
       
 
       }
+
 
 	console.log(vaults)
 	vaults=vaults_ftrr

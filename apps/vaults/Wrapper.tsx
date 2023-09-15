@@ -12,7 +12,7 @@ import type {ReactElement} from 'react';
 
 export default function Wrapper({children, router}: {children: ReactElement, router: NextRouter}): ReactElement {
 	const {manifest} = useCurrentApp(router);
-	console.log("Wrapper")
+
 	return (
 		<>
 			<Meta meta={manifest} />

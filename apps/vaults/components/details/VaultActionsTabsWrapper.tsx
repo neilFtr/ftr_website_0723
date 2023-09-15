@@ -230,7 +230,10 @@ function VaultActionsTabsWrapper({currentVault,amount1,amount2,amount3,amount4,u
 						</Listbox>
 					</div>
 
+					
+
 					<div className={'flex flex-row items-center justify-end space-x-2 pb-0 md:pb-4 md:last:space-x-4'}>
+						<p>Update : </p>
 						<UpdatePopover button_is_clicked={update_is_clicked}/>
 					</div>
 				</div>

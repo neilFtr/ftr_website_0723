@@ -14,8 +14,7 @@ import {useTokenPrice} from '@common/hooks/useTokenPrice';
 import type {ChangeEvent, ReactElement} from 'react';
 
 function VaultDetailsQuickActionsFrom({amount1,amount2,amount3,amount4,toggle,other_token_name}: {amount1:any,amount2:any,amount3:any,amount4:any,toggle:any,other_token_name:any}): ReactElement {
-	console.log("AMOUNT TO PRINT NORCA")
-	console.log(amount1)
+
 	let togle_loc=toggle
 	let amt3=amount3
 	let amt4=amount4

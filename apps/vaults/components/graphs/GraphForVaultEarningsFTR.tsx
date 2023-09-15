@@ -16,7 +16,7 @@ export type TGraphForVaultEarningsProps = {
 
 function GraphForVaultEarningsFTR({currentVault, harvestData, height = 312, isCumulative = true}: TGraphForVaultEarningsProps): ReactElement {
 	const cumulativeData = useMemo((): {name: string; value: number}[] => {
-		console.log("THATS THE FTR CHART")
+		
 		let cumulativeValue = 0;
 		return (
 			harvestData.map((item: {name: string; value: number}): {name: string; value: number} => {
