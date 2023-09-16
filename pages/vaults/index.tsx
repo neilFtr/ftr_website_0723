@@ -132,8 +132,8 @@ function Index(): ReactElement {
       cap_whirlpools=ftr_vaults_data["WhirlpoolStSOLUSDC"]["tvl"]/cap_whirlpools
       last_price_whrlpl=100+Number(ftr_vaults_data["WhirlpoolStSOLUSDC"]["last_price"])
 
-      //funding_arb_apr=Number(ftr_vaults_data["VanillaFArb"]["apr"])/100
-    //funding_arb_tvl=ftr_vaults_data["VanillaFArb"]["tvl"]
+    funding_arb_apr=Number(ftr_vaults_data["VanillaFArb"]["apr"])/100
+    funding_arb_tvl=ftr_vaults_data["VanillaFArb"]["tvl"]
     last_price=100//ftr_vaults_data["VanillaFArb"]["last_price"]
     //funding_arb_cap=Number(ftr_vaults_data["VanillaFArb"]["tvl"])/120
 
@@ -143,13 +143,13 @@ function Index(): ReactElement {
     exo_last_price=ftr_vaults_data["ExosticFArb"]["last_price"]
     exo_funding_arb_cap=Number(ftr_vaults_data["ExosticFArb"]["tvl"])/500
 
-    deribit_lping_apr=Number(ftr_vaults_data["DriftMM"]["apr"])/100
-    deribit_lping_tvl=ftr_vaults_data["DriftMM"]["tvl"]
+    deribit_lping_apr=Number(ftr_vaults_data["DeribitMM"]["apr"])/100
+    deribit_lping_tvl=ftr_vaults_data["DeribitMM"]["tvl"]
     deribit_lping_cap=0
     deribit_lping_last_price=100
 
-    drift_lping_apr=Number(ftr_vaults_data["DeribitMM"]["apr"])/100
-    drift_lping_tvl=ftr_vaults_data["DeribitMM"]["tvl"]
+    drift_lping_apr=Number(ftr_vaults_data["DriftMM"]["apr"])/100
+    drift_lping_tvl=ftr_vaults_data["DriftMM"]["tvl"]
     drift_lping_cap=0
     drift_lping_last_price=100
 
