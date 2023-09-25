@@ -385,12 +385,12 @@ function Index(): ReactElement | null {
     name4="Pseudo Fixed Rate"
     vaults_ftrr["0x3a51269e0707A3416044bad5066858A12198fcf1"]=
       {"address":"0x3a51269e0707A3416044bad5066858A12198fcf1",
-      "ftr_sc_addy":"5MKGZyWmVAyJC2n38oDJDh3kGXo8xCvQVBH8CzeAKQV3",
+      "ftr_sc_addy":"3XeZoQirC8ZvHJn1Qy875g4Z7GFoAocrrzcjgxbfm22E",
       "ftr_type":"Distributor",
-      "ftr_pool_id":"hehe8",
+      "ftr_pool_id":"Dfmta2YikW8yGhYgW7GNYaqjBBkZWDEWjpjNwwPk3g9Q",
       "type":"Automated","symbol":name4,"display_symbol":name4,"formated_symbol":"ExoFArb","name":name4,"display_name":name4,"formated_name":name4,"icon":"https://assets.smold.app/api/token/1/0x3a51269E0707A3416044bad5066858A12198fCf5/logo-128.png",
       "version":String(bmx_sfr_last_price),
-      "category":"Velodrome",
+      "category":"Volatile",
       "inception":bmx_sfr_cap,"decimals":18,"chainID":1,"riskScore":1.9634787522152766,"endorsed":true,"emergency_shutdown":false,"token":{"address":"0x6C280dB098dB673d30d5B34eC04B6387185D3620","underlyingTokensAddresses":["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2","0x72953a5C32413614d24C29c84a66AE4B59581Bbf"],"name":"Curve.fi Factory Crypto Pool: CLEV/ETH","symbol":"CLEVETH-f","type":"Curve LP","display_name":"stSOL LP","display_symbol":"CLEVETH-f",
       "description": "This vault runs a x1 leverage cash and carry strategy. This vault will deliver a fixed rate, minus heding costs. This vault should perform very well in ranging markets, while offering a performance in trensing markets as well. The performance of this vault is variable and there is no guarantee about the future performance of this vault being positive. The vault's funds can only be deployed on Bitmex. The vault  average exposure over time will converge toward 0. The vault will not hold consistent exposure for more than a few days. The performance presented is a 30 days estimation, net of fees. The redemption of this vault can take 24h to 48h [RISKS] The vaults holds different risks, including but not limited to : Funding rate risk, slippage / liquidity gap risk, Solana chain downtime, Bitmex counterparty risk. This vault uses a leverage from 1 to 2. The management of the funds of this vault is centralized : this is not a fully trustless vault. This is not a risk free APR. The adverse scenario of this vault is a sharpe increase of the ETH volatility and price. We estimate that ETH price moving up x2 to x3 in a matter of weeks can definitly lead to loss in capital. [FEES] The vault charges a 0.5% deposit fee. This vault also locks 5% of the amounts invested (used to purchase and lock FTR). This FTR amount is unlocked when you redeem the product, which can lead into a positive / negative peformance depending on the FTR price change over the period. The vault implements a 15% performance fee (applied on your positive P&L, with high water mark).",
       
@@ -1942,27 +1942,33 @@ const InvestFixedRateDistributor = async () => {
             let userFixedRateAccount_l = await getTokenAccountBalance(underlyingUserAddy);
 
 
+
           }catch{
             console.log("Issue finding floating user ta")
 
-            toastit("Status : Creating relevant token account")
-            let  userFixedRate = await getAssociatedTokenAddress(
-              mintPublicKey_fixedRate,
-              provider.wallet.publicKey
-            );
-            console.log(userFixedRate)
-            let createUserFRateInstr = createAssociatedTokenAccountInstruction(
-            program.provider.wallet.publicKey,
-            userFixedRate,
-            program.provider.wallet.publicKey,
-            mintPublicKey_fixedRate,)
+            toastit("Status : Please wait a few minutes after new account creation before investing")
 
-            const transactiong_r = new TransactionBuilder(program, program.provider.wallet)
-             
-            .addInstruction({instructions: [createUserFRateInstr], cleanupInstructions: [], signers: []});
-            transactiong_r.provider=program.provider
-   
-            const signatureg = await transactiong_r.buildAndExecute();
+            toastit("Status : Some token accounts are not detected by the RPC... Yet. Retry in 10s")
+
+            if (false){
+                        let  userFixedRate = await getAssociatedTokenAddress(
+                          mintPublicKey_fixedRate,
+                          provider.wallet.publicKey
+                        );
+                        console.log(userFixedRate)
+                        let createUserFRateInstr = createAssociatedTokenAccountInstruction(
+                        program.provider.wallet.publicKey,
+                        userFixedRate,
+                        program.provider.wallet.publicKey,
+                        mintPublicKey_fixedRate,)
+            
+                        const transactiong_r = new TransactionBuilder(program, program.provider.wallet)
+                         
+                        .addInstruction({instructions: [createUserFRateInstr], cleanupInstructions: [], signers: []});
+                        transactiong_r.provider=program.provider
+               
+                        const signatureg = await transactiong_r.buildAndExecute();
+                      }
           }
 
 

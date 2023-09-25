@@ -206,7 +206,7 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 }
 
 
-	if(currentVault.ftr_pool_id=="hehe8"){
+	if(currentVault.ftr_pool_id=="Dfmta2YikW8yGhYgW7GNYaqjBBkZWDEWjpjNwwPk3g9Q"){
 	columnnnn="2"
 	urrl="https://www.stratcoins.io/maj_datas_ftr_histo_perf.php?input=semi_fr_30"
 }
@@ -222,13 +222,23 @@ function VaultDetailsTabsWrapper({currentVault}: {currentVault: TYDaemonVault}):
 	  country: 0,
 	};
 
-	var actual_data=[{name:formatDate(1689340107),value:100}]
+	function	FdateFTR(value: number): string {
+
+	let	formatedDate = (new Intl.DateTimeFormat([navigator.language, 'en-US'], {
+			month: 'numeric',
+			day: 'numeric'
+		}).format(value));
+	return formatedDate
+	}
+	var actual_data=[{name:FdateFTR(1689340107),value:100}]
+
+
 
 	if (ftr_data_chart){
 		actual_data=[]
 		let all_names=Object.getOwnPropertyNames(ftr_data_chart)
 		for (let an=0;an<all_names.length;an++){
-			actual_data.push({name:formatDate(Number(ftr_data_chart[String(an) as any]["0"])*1000),value:Number(ftr_data_chart[String(an) as any][columnnnn])})
+			actual_data.push({name:FdateFTR(Number(ftr_data_chart[String(an) as any]["0"])*1000),value:Number(ftr_data_chart[String(an) as any][columnnnn])})
 		}
 	}
 

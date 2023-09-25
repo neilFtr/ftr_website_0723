@@ -56,7 +56,7 @@ function GraphForVaultEarnings({currentVault, harvestData, height = 312, isCumul
 					stroke={'currentcolor'} />
 				<XAxis
 					dataKey={'name'}
-					hide />
+					 />
 				<YAxis
 					orientation={'right'}
 					domain={['dataMin', 'auto']}
